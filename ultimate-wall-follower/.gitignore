@@ -1,0 +1,44 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+.python-version
+
+# Tooling
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Secrets and local config
+.env
+.env.*
+secrets/
+*.pem
+id_rsa*
+id_ed25519*
+
+# Data (commit fixtures explicitly; ignore bulk/raw)
+data/raw/
+data/*.bag
+data/*.db3
+data/*.png
+*.npy
+*.npz
+*.h5
+
+# OS / editor
+.DS_Store
+*.swp
+.idea/
+.vscode/
+
+# Logs
+*.log
+logs/
