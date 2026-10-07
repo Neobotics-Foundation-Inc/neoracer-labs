@@ -95,9 +95,10 @@ SPEED = 0.2
 #            farthest one. Positive = the lane bends to the right up ahead.
 # The PID on offset keeps the car centred. K_HEADING adds steering for the bend that is
 # coming, before the offset has had a chance to grow: that is the prediction.
-KP = 1.0           # proportional: steer in proportion to how far off centre the car is
-KI = 0.0           # integral: slowly removes a steady offset. Leave at 0 until KP, KD feel right
-KD = 0.02          # derivative: damps the swing when the offset is changing quickly
+# KP, KI and KD were tuned on the car on 2026-10-07.
+KP = 2.0           # proportional: steer in proportion to how far off centre the car is
+KI = 0.0           # integral: slowly removes a steady offset. Leave at 0 unless the car sits off centre
+KD = 0.2           # derivative: damps the swing when the offset is changing quickly
 K_HEADING = 0.6    # feed-forward: how hard to pre-steer for the bend the far strips see
 INTEGRAL_LIMIT = 0.5  # the integral term can never ask for more than this much steering
 
