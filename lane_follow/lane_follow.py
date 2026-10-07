@@ -57,9 +57,10 @@ BLUE = ((90, 50, 50), (120, 255, 255))
 MIN_CONTOUR_AREA = 60
 
 # How much of the image we search, as a fraction of the height measured from the top.
-# 0.45 means "the bottom 55% of the image". Lower it to look farther ahead (earlier
-# warning of corners, but more floor clutter), raise it to look closer to the bumper.
-CROP_TOP_FRAC = 0.45
+# 0.5 means "the bottom half of the image": the top half is wall and horizon, not floor.
+# Lower it to look farther ahead (earlier warning of corners, but more clutter), raise it
+# to look closer to the bumper.
+CROP_TOP_FRAC = 0.5
 
 # The searched area is cut into this many horizontal strips. Strip 0 is nearest the car
 # and gives the lateral position; the last strip is farthest and gives the heading.
