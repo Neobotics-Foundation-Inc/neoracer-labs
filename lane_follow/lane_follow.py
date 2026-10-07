@@ -47,11 +47,13 @@ import racecar_utils as rc_utils
 rc = racecar_core.create_racecar()
 
 # >> Constants
-# The HSV colour range for blue tape, as (hsv_min, hsv_max). OpenCV hue runs 0..179 and
-# blue sits near 100..115. If the mask misses the tape, widen the range; if it grabs the
-# floor, tighten it. utility/hsv-p_tuner.py or the linefollow dashboard (port 8086) show
-# the mask live while you drag sliders.
-BLUE = ((90, 50, 50), (120, 255, 255))
+# The HSV colour range for the blue tape, as (hsv_min, hsv_max), tuned on the car with
+# the HSV tuner on 2026-10-07. OpenCV hue runs 0..179. The range is wide in hue and low
+# in saturation because that is how the tape reads under the lab lights; a different
+# floor or lighting may need a retune. If the mask misses the tape, widen the range; if
+# it grabs the floor, tighten it. utility/hsv-p_tuner.py or the linefollow dashboard
+# (port 8086) show the mask live while you drag sliders.
+BLUE = ((31, 40, 125), (117, 128, 255))
 
 # The smallest blob (in pixels, inside one strip) we count as a piece of tape
 MIN_CONTOUR_AREA = 60
