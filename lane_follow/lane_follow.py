@@ -84,9 +84,9 @@ LANE_WIDTH_GUESS = 400
 
 # How fast to drive. Constant for now. The number is a fraction of full scale, and full
 # scale is the library's max speed (1.0) x the driver's throttle cap (max_speed_forward
-# in throttle.yaml) x the firmware's 6 m/s ceiling, so with the shipped settings 0.2 is
-# roughly 1.2 m/s. Start low and raise it once the steering is tuned.
-SPEED = 0.2
+# in throttle.yaml) x the firmware's 6 m/s ceiling, so with the shipped settings 0.1 is
+# roughly 0.6 m/s. Start low and raise it once the steering is tuned.
+SPEED = 0.1
 
 # Steering gains. Both inputs are normalised to -1..1 across half the image width.
 #   offset:  where the lane centre is in the nearest strip, relative to the image centre.
@@ -377,8 +377,10 @@ def update():
 def update_slow():
     # Print a line of ascii text for the nearest strip (L, R, lane centre |), which
     # strips saw which lines (near to far), and the numbers the controller is using
+    # No frame has arrived on /camera/color yet. That is the camera node, not this
+    # script: check `racecar service status` and `ros2 topic hz /camera/color`
     if rc.camera.get_color_image() is None:
-        print("X" * 10 + " (No image) " + "X" * 10)
+        print("X" * 10 + " (No image from /camera/color: is the camera node running?) " + "X" * 10)
         return
 
     s = ["-"] * 32
