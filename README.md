@@ -21,8 +21,9 @@ These are the student labs for the NeoRacer. They run with the NeoRacer driver 0
 | grand_prix/grand_prix.py | Grand Prix. A skeleton for the final course |
 | demo.py | A short program that shows start(), update() and update_slow() |
 | template.py | The file to copy when you start a new program |
-| tests/test_core.py | Drives the car from the handset and shows the camera, the detections and the lidar in a window |
-| tests/test_async_core_real.ipynb | A notebook that checks every sensor and control, one section at a time |
+| tests/test_core.py | Drives the car from the sticks and shows the camera, the detections, the lidar and the IMU, one view per flip of the mode switch |
+| tests/test_slam.py | Checks rc.slam against the car's autonomy service: status, a drive, a map save and a lift |
+| tests/test_async_core_real.ipynb | A notebook that checks every sensor and control, one section at a time, and prints a summary |
 | utility/hsv-p_tuner.py | A window for tuning a color range and a P controller on the live camera |
 | VERSION | The labs version, 0.9.0 |
 | LICENSE | GPLv3 |
