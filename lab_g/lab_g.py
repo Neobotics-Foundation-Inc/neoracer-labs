@@ -22,6 +22,7 @@ rules:
 and park using its color camera and LIDAR sensors.
 - The NeoRacer should operate on a state machine with multiple states. There should not be
 a terminal state. If there is no cone in the environment, the program should not crash.
+- The NeoRacer follows the program only while the handset's mode switch is down
 
 Environment: An orange cone on an open floor. Move the cone between runs.
 """
@@ -81,6 +82,10 @@ def start():
     speed = 0
     angle = 0
 
+    # The NeoRacer's full speed (1.0) is about 6 m/s. Uncomment the next line and pick a
+    # lower limit for your room. Every speed the program sets is then scaled by it
+    # rc.drive.set_max_speed(0.25)
+
     # Set initial driving speed and angle
     rc.drive.set_speed_angle(speed, angle)
 
@@ -92,8 +97,9 @@ def start():
         ">> Lab G - Autonomous Parking\n"
         "\n"
         "Controls:\n"
-        "   A button = print current speed and angle\n"
-        "   B button = print contour center and area"
+        "   Mode switch down = the program drives the car\n"
+        "   Mode switch up = the handset drives the car\n"
+        "   Speed, angle and the cone position print every half second"
     )
 
 
@@ -114,17 +120,6 @@ def update():
     # Set the speed and angle of the NeoRacer after calculations have been complete
     rc.drive.set_speed_angle(speed, angle)
 
-    # Print the current speed and angle when the A button is held down
-    if rc.controller.is_down(rc.controller.Button.A):
-        print("Speed:", speed, "Angle:", angle)
-
-    # Print the center and area of the largest contour when B is held down
-    if rc.controller.is_down(rc.controller.Button.B):
-        if contour_center is None:
-            print("No contour found")
-        else:
-            print("Center:", contour_center, "Area:", contour_area)
-
 
 # [FUNCTION] update_slow() is similar to update() but is called once per second by
 # default. It is especially useful for printing debug messages, since printing a 
@@ -141,13 +136,13 @@ def update_slow():
     else:
         # If an image is found but no contour is found, print all dashes
         if contour_center is None:
-            print("-" * 32 + " : area = " + str(contour_area))
+            print("-" * 32 + f" : area = {contour_area}, speed = {speed:.2f}, angle = {angle:.2f}")
 
         # Otherwise, print a line of dashes with a | indicating the contour x-position
         else:
             s = ["-"] * 32
             s[int(contour_center[1] / 20)] = "|"
-            print("".join(s) + " : area = " + str(contour_area))
+            print("".join(s) + f" : area = {contour_area}, speed = {speed:.2f}, angle = {angle:.2f}")
 
 
 ########################################################################################

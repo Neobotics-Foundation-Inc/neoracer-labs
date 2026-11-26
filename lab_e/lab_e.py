@@ -24,6 +24,8 @@ the following constraints:
 - When the NeoRacer sees a GREEN traffic light, go straight
 - When the NeoRacer sees a RED traffic light, stop moving,
 - When the NeoRacer sees any other traffic light colors, stop moving.
+- The NeoRacer follows the program only while the handset's mode switch is down. Flipping
+it up hands the car back to the handset and clears the queue
 
 Considerations: Since the user is not controlling the NeoRacer, be sure to consider the
 following scenarios:
@@ -71,6 +73,8 @@ contour_area = 0  # The area of contour
 
 queue = [] # The queue of instructions
 stoplight_color = "" # The current color of the stoplight
+speed = 0.0 # The current speed of the car
+angle = 0.0 # The current angle of the car's wheels
 
 ########################################################################################
 # Functions
@@ -100,6 +104,10 @@ def update_contour():
 # [FUNCTION] The start function is run once when the program starts
 def start():
 
+    # The NeoRacer's full speed (1.0) is about 6 m/s. Uncomment the next line and pick a
+    # lower limit for your room. Every speed the program sets is then scaled by it
+    # rc.drive.set_max_speed(0.25)
+
     # Set initial driving speed and angle
     rc.drive.set_speed_angle(0,0)
 
@@ -111,8 +119,9 @@ def start():
         ">> Lab E - Stoplight Challenge\n"
         "\n"
         "Controls:\n"
-        "   A button = print current speed and angle\n"
-        "   B button = print contour center and area"
+        "   Mode switch down = the program drives the car\n"
+        "   Mode switch up = the handset drives the car and the queue is cleared\n"
+        "   Speed, angle, stoplight color and contour print every half second"
     )
 
 # [FUNCTION] After start() is run, this function is run once every frame (ideally at
@@ -120,6 +129,8 @@ def start():
 # in the terminal
 def update():
     global queue
+    global speed
+    global angle
 
     update_contour()
 
@@ -137,16 +148,19 @@ def update():
     # Send speed and angle commands to the NeoRacer
     rc.drive.set_speed_angle(speed, angle)
 
-    # Print the current speed and angle when the A button is held down
-    if rc.controller.is_down(rc.controller.Button.A):
-        print("Speed:", speed, "Angle:", angle)
+    # When the mode switch is flipped up, the handset drives the car. Clear the queue so
+    # the program starts fresh when the switch comes back down
+    if rc.controller.was_released(rc.controller.Button.RB):
+        stopNow()
 
-    # Print the center and area of the largest contour when B is held down
-    if rc.controller.is_down(rc.controller.Button.B):
-        if contour_center is None:
-            print("No contour found")
-        else:
-            print("Center:", contour_center, "Area:", contour_area)
+# [FUNCTION] update_slow() is called every half second (see start()). It prints the
+# values a student needs while tuning, in place of printing every frame
+def update_slow():
+    print("Speed:", speed, "Angle:", angle, "Stoplight:", stoplight_color)
+    if contour_center is None:
+        print("No contour found")
+    else:
+        print("Center:", contour_center, "Area:", contour_area)
 
 # [FUNCTION] Appends the correct instructions to make a 90 degree right turn to the queue
 def turnRight():

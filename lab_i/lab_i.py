@@ -25,6 +25,7 @@ should be in the center of the walls.
 left wall, or both walls.
 - Both speed and angle parameters are variable and recalculated every frame. The speed and angle
 values are sent once at the end of the update() function.
+- The NeoRacer follows the program only while the handset's mode switch is down
 
 Note: This file consists of bare-bones skeleton code, which is the bare minimum to run a
 Python file on the NeoRacer. Less help will be provided from here on out, since you've made
@@ -55,6 +56,9 @@ rc = racecar_core.create_racecar()
 
 # [FUNCTION] The start function is run once when the program starts
 def start():
+    # The NeoRacer's full speed (1.0) is about 6 m/s. Uncomment the next line and pick a
+    # lower limit for your room. Every speed the program sets is then scaled by it
+    # rc.drive.set_max_speed(0.25)
     pass  # Remove 'pass' and write your source code for the start() function here
 
 

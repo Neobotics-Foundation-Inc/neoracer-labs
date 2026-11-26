@@ -39,6 +39,9 @@ rc = racecar_core.create_racecar()
 
 # [FUNCTION] The start function is run once when the program starts
 def start():
+    # The NeoRacer's full speed (1.0) is about 6 m/s. Uncomment the next line and pick a
+    # lower limit for your room. Every speed the program sets is then scaled by it
+    # rc.drive.set_max_speed(0.25)
     pass # Remove 'pass' and write your source code for the start() function here
 
 # [FUNCTION] After start() is run, this function is run once every frame (ideally at

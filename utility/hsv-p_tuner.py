@@ -16,9 +16,9 @@ line-following labs. All UI lives in one Tk window: sliders on the left, mask
 and camera/contour previews on the right, line-position plot below.
 
 Controls:
-    Right trigger = release NeoRacer failsafe (drive)
-    A button      = save tuned HSV + speed/angle values
-    B button      = print current speed/angle
+    Mode switch down = the program drives when the throttle stick is pushed forward
+    Throttle stick forward = drive at the slider speed while the program steers
+    Mode switch up = stop, and print the current HSV range and speed/angle
 """
 
 ########################################################################################
@@ -68,7 +68,7 @@ CROP_TOP = 360
 CROP_FLOOR = ((CROP_TOP, 0), (FRAME_H, FRAME_W))
 
 # P-control gains (0..1)
-tune_speed = 0.5  # default 50% so the car drives as soon as the trigger is held
+tune_speed = 0.25  # default 25%, about 1.5 m/s, so the car drives slowly as soon as the throttle stick is pushed
 tune_angle = 0.5
 
 # Rolling line-position history
@@ -220,7 +220,7 @@ def build_tk_ui():
     _make_slider(left, "S_High", 1, 255, 255, on_high_s_change, custom_font)
     _make_slider(left, "V_Low", 1, 255, 1, on_low_v_change, custom_font)
     _make_slider(left, "V_High", 1, 255, 255, on_high_v_change, custom_font)
-    _make_slider(left, "Speed (%)", 0, 100, 50, on_speed_change, custom_font)
+    _make_slider(left, "Speed (%)", 0, 100, 25, on_speed_change, custom_font)
     _make_slider(left, "Angle Sensitivity (%)", 0, 100, 50,
                  on_angsens_change, custom_font)
 
@@ -367,14 +367,14 @@ def start():
     rc.drive.set_speed_angle(0, 0)
     _ui_visible_requested = True  # _tk_refresh will deiconify the window
     print(
-        ">> NeoRacer OneShot Demo - Line Follower with Live HSV Tuning\n"
+        ">> NeoRacer Line Follower with Live HSV Tuning\n"
         "\n"
         "Slider changes take effect immediately. No save step is needed.\n"
         "\n"
         "Controls:\n"
-        "   Right trigger = release NeoRacer failsafe (drive)\n"
-        "   A button = print current HSV + speed/angle to terminal\n"
-        "   B button = print system speed/angle"
+        "   Mode switch down = the program drives when the throttle stick is pushed forward\n"
+        "   Throttle stick forward = drive at the slider speed while the program steers\n"
+        "   Mode switch up = stop, and print the current HSV range and speed/angle"
     )
 
 
@@ -409,7 +409,11 @@ def update():
     # Live speed from the slider; no controller-button save step required.
     speed = tune_speed
 
-    if rc.controller.get_trigger(rc.controller.Trigger.RIGHT) > 0.1:
+    # The car drives while the throttle stick is pushed forward. On the NeoRacer the
+    # throttle stick is Joystick.LEFT and its y value is +1 fully forward and 0 at rest.
+    # The car follows these commands only while the handset's mode switch is down.
+    _, throttle = rc.controller.get_joystick(rc.controller.Joystick.LEFT)
+    if throttle > 0.1:
         rc.drive.set_speed_angle(speed, angle)
         if len(loc_history) >= HIST_LEN:
             loc_history.pop(-1)
@@ -419,15 +423,14 @@ def update():
     else:
         rc.drive.set_speed_angle(0, 0)
 
-    # A: snapshot the current tuning to the terminal so the student can
-    # transcribe it. Tuning itself is already applied live from the sliders.
-    if rc.controller.was_pressed(rc.controller.Button.A):
+    # Mode switch flipped up (Button.RB released): snapshot the current tuning to the
+    # terminal so the student can transcribe it. Tuning itself is already applied live
+    # from the sliders.
+    if rc.controller.was_released(rc.controller.Button.RB):
         print(f"HSV Threshold: ({H_low}, {S_low}, {V_low}), "
               f"({H_high}, {S_high}, {V_high})")
         print(f"Speed/Angle: tune_speed={tune_speed:.2f}, "
               f"tune_angle={tune_angle:.2f}")
-
-    if rc.controller.was_pressed(rc.controller.Button.B):
         print(f"System Speed/Angle: Speed={speed:.2f}, Angle={angle:.2f}")
 
 

@@ -14,9 +14,12 @@ Version: 0.9.0
 Purpose: To verify that the basic NeoRacer functions work and the student has set up
 the system correctly to run Python scripts with the start/update paradigm on the car.
 
-Expected Outcome: Terminal output and NeoRacer movement occurs when buttons are pressed
-- When the "A" button is pressed, print a message to the terminal window
-- When the "B" button is pressed, NeoRacer moves forward and to the right
+Expected Outcome: Terminal output and NeoRacer movement occur when the handset's mode
+switch is flipped
+- When the mode switch is flipped down, print a message and drive in an L: forward for
+one second, then forward and to the right for one second, then stop
+- When the mode switch is flipped up, print a message and stop
+- While the mode switch is down, print a message once per second from update_slow()
 """
 
 ########################################################################################
@@ -61,15 +64,21 @@ def update():
     global counter
     global isDriving
 
-    # This prints a message every time the A button is pressed on the controller
-    if rc.controller.was_pressed(rc.controller.Button.A):
-        print("The A button was pressed")
-
-    # Reset the counter and start driving in an L every time the B button is pressed on
-    # the controller
-    if rc.controller.was_pressed(rc.controller.Button.B):
+    # On the NeoRacer, Button.RB reads as down while the handset's mode switch is down,
+    # and the car follows the program only in that position. was_pressed() is True on
+    # the one frame the switch goes down
+    if rc.controller.was_pressed(rc.controller.Button.RB):
+        print("The mode switch was flipped down")
+        # Reset the counter and start driving in an L
         counter = 0
         isDriving = True # Toggle Variable
+
+    # was_released() is True on the one frame the switch goes back up. The handset
+    # drives the car again, so the program stops its own L
+    if rc.controller.was_released(rc.controller.Button.RB):
+        print("The mode switch was flipped up")
+        isDriving = False
+        rc.drive.stop()
 
     if isDriving:
         # rc.get_delta_time() gives the time in seconds since the last time
@@ -77,11 +86,11 @@ def update():
         counter += rc.get_delta_time()
 
         if counter < 1:
-            # Drive forward at full speed for one second
-            rc.drive.set_speed_angle(1, 0)
+            # Drive forward at a quarter of full speed (about 1.5 m/s) for one second
+            rc.drive.set_speed_angle(0.25, 0)
         elif counter < 2:
-            # Turn right at full speed for the next second
-            rc.drive.set_speed_angle(1, 1)
+            # Turn right at the same speed for the next second
+            rc.drive.set_speed_angle(0.25, 1)
         else:
             # Otherwise, stop the car
             rc.drive.stop()
@@ -95,11 +104,10 @@ def update_slow():
     After start() is run, this function is run at a constant rate that is slower
     than update().  By default, update_slow() is run once per second
     """
-    # This prints a message every time that the right bumper is pressed during
-    # a call to to update_slow.  If we press and hold the right bumper, it
-    # will print a message once per second
+    # is_down() is True on every frame the mode switch is down, so this prints a
+    # message once per second for as long as the switch stays down
     if rc.controller.is_down(rc.controller.Button.RB):
-        print("The right bumper is currently down (update_slow)")
+        print("The mode switch is down (update_slow)")
 
 
 ########################################################################################

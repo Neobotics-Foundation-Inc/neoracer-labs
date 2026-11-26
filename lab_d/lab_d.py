@@ -11,16 +11,18 @@ Author: [PLACEHOLDER] << [Write your name or team name here]
 
 Version: 0.9.0
 
-Purpose: Create a script to enable semi-autonomous driving for the NeoRacer. Button presses
-enable a series of instructions sent to the NeoRacer, which enable it to drive in various shapes.
-Complete the lines of code under the #TODO indicators to complete the lab.
+Purpose: Create a script to enable semi-autonomous driving for the NeoRacer. Flips of the
+handset's mode switch start a series of instructions sent to the NeoRacer, which make it
+drive in various shapes. Complete the lines of code under the #TODO indicators to complete
+the lab.
 
 Expected Outcome: When the user runs the script, they are able to control the NeoRacer
-using the following keys:
-- When the "A" button is pressed, drive through the obstacle "Zigzag"
-- When the "B" button is pressed, drive through the obstacle "Spiral"
-- When the "X" button is pressed, drive through the obstacle "Hallway"
-- When the "Y" button is pressed, drive through the obstacle "Maze"
+with the handset's mode switch:
+- The first time the mode switch is flipped down, drive through the obstacle "Zigzag"
+- The second time, drive through the obstacle "Spiral"
+- The third time, drive through the obstacle "Hallway"
+- The fourth time, drive through the obstacle "Maze", then start over with the "Zigzag"
+- When the mode switch is flipped up, the handset drives the car and the queue is cleared
 """
 
 ########################################################################################
@@ -39,6 +41,9 @@ rc = racecar_core.create_racecar()
 # Each entry is a list containing (time remaining, speed, angle)
 queue = []
 
+# Which shape the next flip of the mode switch drives: 0 Zigzag, 1 Spiral, 2 Hallway, 3 Maze
+shape_index = 0
+
 
 ########################################################################################
 # Functions
@@ -52,15 +57,17 @@ def start():
     # Begin with an empty queue
     queue.clear()
 
+    # The NeoRacer's full speed (1.0) is about 6 m/s. Uncomment the next line and pick a
+    # lower limit for your room. Every speed the program sets is then scaled by it
+    # rc.drive.set_max_speed(0.25)
+
     # Print start message
     print(
         ">> Lab D - Driving in Shapes\n"
         "\n"
         "Controls:\n"
-        "   A button = drive through obstacle: \"Zigzag\"\n"
-        "   B button = drive through obstacle: \"Spiral\"\n"
-        "   X button = drive through obstacle: \"Hallway\"\n"
-        "   Y button = drive through obstacle: \"Maze\"\n"
+        "   Mode switch down = drive the next shape: \"Zigzag\", \"Spiral\", \"Hallway\", \"Maze\"\n"
+        "   Mode switch up = stop and clear the queue\n"
     )
 
 
@@ -69,22 +76,26 @@ def start():
 # in the terminal
 def update():
     global queue
+    global shape_index
 
-    # When the A button is pressed, add instructions to drive through the obstacle "Zigzag"
-    if rc.controller.was_pressed(rc.controller.Button.A):
-        drive_zigzag()
+    # Each time the mode switch is flipped down, add the instructions for the next shape.
+    # On the NeoRacer, Button.RB reads as down while the switch is down, and the car follows
+    # the program only in that position
+    if rc.controller.was_pressed(rc.controller.Button.RB):
+        if shape_index == 0:
+            drive_zigzag()
+        elif shape_index == 1:
+            drive_spiral()
+        elif shape_index == 2:
+            drive_hallway()
+        else:
+            drive_maze()
+        shape_index = (shape_index + 1) % 4
 
-    # When the B button is pressed, add instructions to drive through the obstacle "Spiral"
-    if rc.controller.was_pressed(rc.controller.Button.B):
-        drive_spiral()
-
-    # When the X button is pressed, add instructions to drive through the obstacle "Hallway"
-    if rc.controller.was_pressed(rc.controller.Button.X):
-        drive_hallway()
-
-    # When the Y button is pressed, add instructions to drive through the obstacle "Maze"
-    if rc.controller.was_pressed(rc.controller.Button.Y):
-        drive_maze()
+    # When the mode switch is flipped up, the handset drives the car again. Clear the queue
+    # so the shape does not continue when the switch comes back down
+    if rc.controller.was_released(rc.controller.Button.RB):
+        queue.clear()
 
     # TODO Part 1: Analyze the following code segment that executes instructions from the queue.
     # Fill in the blanks with the missing variable assignments and indices according to the

@@ -35,20 +35,17 @@ rc = racecar_core.create_racecar()
 # don't leak orphan windows when the active mode changes.
 WINDOW_NAME = "test_core"
 
-# Drive tuning.
-MAX_SPEED_STEP = 0.05
-MAX_SPEED_MIN = 0.0
-MAX_SPEED_MAX = 1.0
+# Drive tuning. 0.25 of full scale is about 1.5 m/s on the NeoRacer.
+MAX_SPEED = 0.25
 
 # LIDAR top-down render config.
 LIDAR_RADIUS_PX = 400
 LIDAR_MAX_RANGE_CM = 1000
 
-max_speed = 0.0
-
-# Active display mode: None (window closed) or one of "camera", "edgetpu", "lidar".
-# Buttons toggle their own mode on was_pressed; pressing a different mode's
-# button while one is active switches to that mode (single window, single mode).
+# Active display mode: None (window closed) or one of "camera", "detections", "lidar",
+# "imu". Each flip of the handset's mode switch to down advances to the next mode
+# (single window, single mode). "imu" closes the window and prints once per second.
+MODES = [None, "camera", "detections", "lidar", "imu"]
 display_mode = None
 
 ########################################################################################
@@ -76,17 +73,17 @@ def _show(image):
     cv.waitKey(1)
 
 
-def _toggle_mode(button_mode):
-    """Toggle off if button_mode is already active, else switch to it."""
+def _next_mode():
+    """Advance to the next display mode, opening or closing the window as needed."""
     global display_mode
-    if display_mode == button_mode:
-        display_mode = None
+    previous = display_mode
+    display_mode = MODES[(MODES.index(previous) + 1) % len(MODES)]
+    needs_window = display_mode in ("camera", "detections", "lidar")
+    had_window = previous in ("camera", "detections", "lidar")
+    if needs_window and not had_window:
+        _open_window()
+    elif had_window and not needs_window:
         _close_window()
-    else:
-        was_closed = display_mode is None
-        display_mode = button_mode
-        if was_closed:
-            _open_window()
 
 
 def _annotate_detections(image, detections):
@@ -129,11 +126,9 @@ def start():
     """
     This function is run once when the program starts.
     """
-    global max_speed
     global display_mode
 
-    max_speed = 0.25
-    rc.drive.set_max_speed(max_speed)
+    rc.drive.set_max_speed(MAX_SPEED)
     rc.drive.stop()
 
     # Make sure no window is left over from a previous run.
@@ -145,14 +140,12 @@ def start():
         ">> Test Core: A testing program for the racecar_core library.\n"
         "\n"
         "Controls:\n"
-        "    Left joystick Y = drive forward / backward\n"
-        "    Right joystick X = steer left / right\n"
-        "    Left joystick click = decrease max speed by 0.05\n"
-        "    Right joystick click = increase max speed by 0.05\n"
-        "    A button = toggle forward camera (fullscreen)\n"
-        "    B button = toggle forward camera + EdgeTPU overlay (fullscreen)\n"
-        "    X button = toggle LIDAR scan (fullscreen)\n"
-        "    Y button = hold to print IMU data (closes any open window)\n"
+        "    Mode switch down = the program drives from the sticks\n"
+        "    Throttle stick (left stick Y) = drive forward / backward\n"
+        "    Steering stick (right stick X) = steer left / right\n"
+        "    Each flip of the mode switch down = next view: forward camera (fullscreen),\n"
+        "        camera + detections overlay, lidar scan, IMU data once per second, off\n"
+        f"    Max speed is fixed at {MAX_SPEED}, about {MAX_SPEED * 6:.1f} m/s\n"
     )
 
 
@@ -161,60 +154,27 @@ def update():
     After start() is run, this function is run every frame until Ctrl+C is pressed
     in the terminal.
     """
-    global max_speed
     global display_mode
 
-    # Drive: left stick Y for throttle, right stick X for steering.
-    # Left/right bumpers are intentionally unbound. The driver mux owns them.
+    # Drive: throttle stick (left stick Y) for speed, steering stick (right stick X) for
+    # the angle. On the NeoRacer, LB and RB are the handset's mode switch: RB reads as down
+    # while the switch is down and the car follows the program; LB reads as down while the
+    # switch is up or in the middle and the handset drives the car directly.
     _, left_y = rc.controller.get_joystick(rc.controller.Joystick.LEFT)
     right_x, _ = rc.controller.get_joystick(rc.controller.Joystick.RIGHT)
     rc.drive.set_speed_angle(left_y, right_x)
 
-    # Adjust max speed in 0.05 steps on joystick click. Print once per change.
-    if rc.controller.was_pressed(rc.controller.Button.RJOY):
-        new_speed = min(MAX_SPEED_MAX, round(max_speed + MAX_SPEED_STEP, 2))
-        if new_speed != max_speed:
-            max_speed = new_speed
-            rc.drive.set_max_speed(max_speed)
-            print(f"max_speed increased to [{max_speed:.2f}]")
-    if rc.controller.was_pressed(rc.controller.Button.LJOY):
-        new_speed = max(MAX_SPEED_MIN, round(max_speed - MAX_SPEED_STEP, 2))
-        if new_speed != max_speed:
-            max_speed = new_speed
-            rc.drive.set_max_speed(max_speed)
-            print(f"max_speed decreased to [{max_speed:.2f}]")
-
-    # Display-mode toggles. Each button toggles its own view on was_pressed;
-    # pressing a different display button while one is active switches modes.
-    # Y is hold-to-print instead of a toggle (handled below) since the IMU
-    # stream is one line per frame and would flood the terminal otherwise.
-    if rc.controller.was_pressed(rc.controller.Button.A):
-        _toggle_mode("camera")
-    if rc.controller.was_pressed(rc.controller.Button.B):
-        _toggle_mode("edgetpu")
-    if rc.controller.was_pressed(rc.controller.Button.X):
-        _toggle_mode("lidar")
-
-    # Y: hold to stream IMU data. On the initial press, close any open
-    # display window so the terminal output is the only feedback surface.
-    if rc.controller.was_pressed(rc.controller.Button.Y) and display_mode is not None:
-        _close_window()
-        display_mode = None
-    if rc.controller.is_down(rc.controller.Button.Y):
-        a = rc.physics.get_linear_acceleration()
-        w = rc.physics.get_angular_velocity()
-        # REP-103 body axes; at rest, acceleration z reads +9.81
-        print(
-            f"Linear acceleration (x fwd, y left, z up): ({a[0]:5.2f},{a[1]:5.2f},{a[2]:5.2f}); "
-            f"Angular velocity (roll, pitch, yaw): ({w[0]:5.2f},{w[1]:5.2f},{w[2]:5.2f})"
-        )
+    # Each flip of the mode switch to down advances the view. The sticks keep driving.
+    if rc.controller.was_pressed(rc.controller.Button.RB):
+        _next_mode()
+        print(f"view: {display_mode or 'off'}")
 
     # Render whichever display mode is currently active.
     if display_mode == "camera":
         image = rc.camera.get_color_image()
         if image is not None:
             _show(image)
-    elif display_mode == "edgetpu":
+    elif display_mode == "detections":
         image = rc.camera.get_color_image()
         if image is not None:
             _show(_annotate_detections(image, rc.vision.get_detections()))
@@ -224,10 +184,25 @@ def update():
             _show(_render_lidar(lidar))
 
 
+def update_slow():
+    """
+    Runs once per second. Prints the IMU data while the "imu" view is active, so the
+    terminal is not flooded with one line per frame.
+    """
+    if display_mode == "imu":
+        a = rc.physics.get_linear_acceleration()
+        w = rc.physics.get_angular_velocity()
+        # REP-103 body axes; at rest, acceleration z reads +9.81
+        print(
+            f"Linear acceleration (x fwd, y left, z up): ({a[0]:5.2f},{a[1]:5.2f},{a[2]:5.2f}); "
+            f"Angular velocity (roll, pitch, yaw): ({w[0]:5.2f},{w[1]:5.2f},{w[2]:5.2f})"
+        )
+
+
 ########################################################################################
 # DO NOT MODIFY: Register start and update and begin execution
 ########################################################################################
 
 if __name__ == "__main__":
-    rc.set_start_update(start, update)
+    rc.set_start_update(start, update, update_slow)
     rc.go()
