@@ -185,7 +185,7 @@ class SaveSection(Section):
         if not self.started:
             if rc.slam.get_mode() != "mapping":
                 rc.slam.save_map()
-                r.check("refused unless mapping", rc.slam.get_save_status() == "failed: not mapping",
+                r.check("fails unless mapping", rc.slam.get_save_status() == "failed: not mapping",
                         rc.slam.get_save_status())
                 print("  Start mapping to test a save.")
                 return True

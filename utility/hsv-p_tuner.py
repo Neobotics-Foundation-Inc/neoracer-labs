@@ -18,7 +18,13 @@ and camera/contour previews on the right, line-position plot below.
 Controls:
     Mode switch down = the program drives when the throttle stick is pushed forward
     Throttle stick forward = drive at the slider speed while the program steers
-    Mode switch up = stop, and print the current HSV range and speed/angle
+    Mode switch up = the handset drives the car; the program prints the current HSV range
+                     and speed/angle
+
+Expected Outcome: The Tk window shows the mask, the camera view with the contour and the
+line position plot. With the mode switch down and the throttle stick forward, the car
+follows the line at the slider speed. Each flip of the switch up prints the HSV range and
+the speed and angle to the terminal.
 """
 
 ########################################################################################
@@ -374,7 +380,7 @@ def start():
         "Controls:\n"
         "   Mode switch down = the program drives when the throttle stick is pushed forward\n"
         "   Throttle stick forward = drive at the slider speed while the program steers\n"
-        "   Mode switch up = stop, and print the current HSV range and speed/angle"
+        "   Mode switch up = the handset drives the car; the program prints the current HSV range and speed/angle"
     )
 
 

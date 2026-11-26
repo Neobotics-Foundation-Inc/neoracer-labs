@@ -31,7 +31,7 @@ These are the student labs for the NeoRacer. They run with the NeoRacer driver 0
 
 ## Installation
 
-The driver's setup clones the `main` branch of this repository and copies it over `~/jupyter_ws/neoracer-os/labs`. `racecar update` does the same. Files a student made or changed are kept. A file removed from this repository stays on the car.
+The driver's setup clones the `main` branch of this repository and copies it over `~/jupyter_ws/neoracer-os/labs`. `racecar update` does the same. A file a student added under a new name is kept. A shipped file a student edited in place is replaced by the new copy, so copy a lab to a new name before you change it. A file removed from this repository stays on the car.
 
 ## Running a lab
 
@@ -45,7 +45,7 @@ The driver's setup clones the `main` branch of this repository and copies it ove
 
 3. The program starts as soon as it runs. Press Ctrl+C to stop it.
 
-The car follows a program only while the handset's mode switch is down, or while the handset is off. With the switch up, the handset drives the car and the program's drive commands do nothing. Keep the switch up, or lift the wheels off the ground, until you are ready.
+The car follows a program only while the handset's mode switch is down, or while the handset is off. With the switch up, the handset drives the car and the program's drive commands do nothing. Start every program with the switch up, and keep it up, or lift the wheels off the ground, until you are ready. A program that starts with the switch already down can count that as a flip down, and a lab that drives on a flip then moves at once. Center the sticks before you flip the switch up, because the handset drives the car the moment the switch is up.
 
 A speed of 1.0 is the car's full speed, about 6 m/s. Every lab that drives the car, and template.py, has a commented line in start() that sets a lower limit. Uncomment it and pick a speed for your room.
 
@@ -55,7 +55,7 @@ A speed of 1.0 is the car's full speed, about 6 m/s. Every lab that drives the c
 | --- | --- |
 | Lidar | 1,440 samples over 360 degrees, 0.25 degrees apart. Index 0 is the front, counting clockwise. The rear 90 degrees read 0 |
 | Camera | Color images, 640 by 480, from a USB webcam. No depth image |
-| Handset | Joystick.LEFT y is the throttle stick, forward is positive. Joystick.RIGHT x is the steering stick, right is positive. Button.RB is the mode switch down, Button.LB is the mode switch up. No other button exists |
+| Handset | Joystick.LEFT y is the throttle stick, forward is positive. Joystick.RIGHT x is the steering stick, right is positive. Button.RB is the mode switch down, Button.LB is the mode switch up or in the middle. No other button exists |
 | IMU | x forward, y left, z up |
 | Encoder | The car's forward speed in m/s |
 | Battery | Voltage only |

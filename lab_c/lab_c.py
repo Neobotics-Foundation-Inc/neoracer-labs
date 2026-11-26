@@ -86,10 +86,10 @@ def update():
     # and when it is pulled back, the NeoRacer moves backward at the designated speed.
     # rc.controller.get_joystick() returns (x, y). On the NeoRacer the throttle stick is
     # Joystick.LEFT and its y value is +1 fully forward, -1 fully back and 0 at rest.
-    (x, y) = rc.controller.get_joystick(rc.controller.Joystick._____)
-    if y > 0.5:
+    (throttle_x, throttle_y) = rc.controller.get_joystick(rc.controller.Joystick._____)
+    if throttle_y > 0.5:
         speed = _____
-    elif y < -0.5:
+    elif throttle_y < -0.5:
         speed = _____
     else:
         speed = 0
@@ -98,10 +98,10 @@ def update():
     # value of the steering stick's x-axis is greater than 0, the NeoRacer's wheels turn right.
     # When the value is less than 0, the NeoRacer's wheels turn left. On the NeoRacer the
     # steering stick is Joystick.RIGHT and its x value is +1 fully right and -1 fully left.
-    (x, y) = rc.controller.get_joystick(rc.controller.Joystick._____)
-    if x > 0.5:
+    (steering_x, steering_y) = rc.controller.get_joystick(rc.controller.Joystick._____)
+    if steering_x > 0.5:
         angle = _____
-    elif x < -0.5:
+    elif steering_x < -0.5:
         angle = -_____
     else:
         angle = 0
@@ -113,9 +113,8 @@ def update():
     # so flip it up, then down again, to change the step.
 
     # TODO Part 4: Once Parts 1 to 3 work, replace the fixed steps: set speed to
-    # y * speed_offset and angle to x * angle_offset, so the car follows how far each
-    # stick is pushed. Use the y from the throttle stick for the speed and the x from the
-    # steering stick for the angle.
+    # throttle_y * speed_offset and angle to steering_x * angle_offset, so the car follows
+    # how far each stick is pushed.
 
     # Send the speed and angle values to the NeoRacer
     rc.drive.set_speed_angle(speed, angle)

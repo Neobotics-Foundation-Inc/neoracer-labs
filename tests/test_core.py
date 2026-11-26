@@ -12,6 +12,10 @@ Author: Neobotics
 Version: 0.9.0
 
 Purpose: A simple program which can be used to manually test racecar_core functionality.
+
+Expected Outcome: With the mode switch down, the sticks drive the car at a quarter of full
+speed. Each flip of the switch down opens the next view: the camera, the camera with
+detection boxes, the lidar scan, the IMU printed once per second, then no view.
 """
 
 ########################################################################################
