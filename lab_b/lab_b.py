@@ -1,13 +1,15 @@
 """
-MIT BWSI Autonomous RACECAR
-MIT License
-racecar-neo-outreach-labs
+Neobotics Foundation Inc.
+GPLv3 License
+neoracer-labs/lab_b/
 
 File Name: lab_b.py
 
 Title: Lab B - Printing Statements Using Controller
 
 Author: [PLACEHOLDER] << [Write your name or team name here]
+
+Version: 0.9.0
 
 Purpose: Print several statements to the terminal window from the update() function
 and gain an understanding of how to poll data from the controller. Complete the lines of

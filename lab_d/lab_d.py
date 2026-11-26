@@ -1,13 +1,15 @@
 """
-MIT BWSI Autonomous RACECAR
-MIT License
-racecar-neo-outreach-labs
+Neobotics Foundation Inc.
+GPLv3 License
+neoracer-labs/lab_d/
 
 File Name: lab_d.py
 
 Title: Lab D - Driving in Shapes
 
 Author: [PLACEHOLDER] << [Write your name or team name here]
+
+Version: 0.9.0
 
 Purpose: Create a script to enable semi-autonomous driving for the RACECAR. Button presses
 enable a series of instructions sent to the RACECAR, which enable it to drive in various shapes.

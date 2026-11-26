@@ -1,13 +1,15 @@
 """
-MIT BWSI Autonomous RACECAR
-MIT License
-racecar-neo-outreach-labs
+Neobotics Foundation Inc.
+GPLv3 License
+neoracer-labs/lab_c/
 
 File Name: lab_c.py
 
 Title: Lab C - RACECAR Controller
 
 Author: [PLACEHOLDER] << [Write your name or team name here]
+
+Version: 0.9.0
 
 Purpose: Using a Python script and the data polled from the controller module,
 write code to replicate a manual control scheme for the RACECAR. Gain a mastery

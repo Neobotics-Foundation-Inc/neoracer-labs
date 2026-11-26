@@ -1,13 +1,15 @@
 """
-MIT BWSI Autonomous RACECAR
-MIT License
-racecar-neo-outreach-labs
+Neobotics Foundation Inc.
+GPLv3 License
+neoracer-labs/
 
 File Name: template.py << [Modify with your own file name!]
 
 Title: [PLACEHOLDER] << [Modify with your own title]
 
 Author: [PLACEHOLDER] << [Write your name or team name here]
+
+Version: 0.9.0
 
 Purpose: [PLACEHOLDER] << [Write the purpose of the script here]
 

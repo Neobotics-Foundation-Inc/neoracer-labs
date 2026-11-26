@@ -1,13 +1,15 @@
 """
-MIT BWSI Autonomous RACECAR
-MIT License
-racecar-neo-outreach-labs
+Neobotics Foundation Inc.
+GPLv3 License
+neoracer-labs/lab_f/
 
 File Name: lab_f.py
 
 Title: Lab F - Line Follower
 
 Author: [PLACEHOLDER] << [Write your name or team name here]
+
+Version: 0.9.0
 
 Purpose: Write a script to enable fully autonomous behavior from the RACECAR. The
 RACECAR should automatically identify the color of a line it sees, then drive on the

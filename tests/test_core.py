@@ -1,11 +1,15 @@
 """
-MIT BWSI Autonomous RACECAR Course
-GNU General Public License v3.0
-racecar-neo-v2 / labs / tests
+Neobotics Foundation Inc.
+GPLv3 License
+neoracer-labs/tests/
 
 File Name: test_core.py
 
 Title: Test Core
+
+Author: Neobotics
+
+Version: 0.9.0
 
 Purpose: A simple program which can be used to manually test racecar_core functionality.
 """

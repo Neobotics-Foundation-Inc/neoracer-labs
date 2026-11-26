@@ -1,13 +1,15 @@
 """
-MIT BWSI Autonomous RACECAR
-MIT License
-racecar-neo-outreach-labs
+Neobotics Foundation Inc.
+GPLv3 License
+neoracer-labs/lab_e/
 
 File Name: lab_e.py
 
 Title: Lab E - Stoplight Challenge
 
 Author: [PLACEHOLDER] << [Write your name or team name here]
+
+Version: 0.9.0
 
 Purpose: Write a script to enable autonomous behavior from the RACECAR. When
 the RACECAR sees a stoplight object (colored cube in the simulator), respond accordingly

@@ -1,13 +1,15 @@
 """
-MIT BWSI Autonomous RACECAR
-MIT License
-racecar-neo-outreach-labs
+Neobotics Foundation Inc.
+GPLv3 License
+neoracer-labs/lab_i/
 
 File Name: lab_i.py
 
 Title: Lab I - Wall Follower
 
 Author: [PLACEHOLDER] << [Write your name or team name here]
+
+Version: 0.9.0
 
 Purpose: This script provides the RACECAR with the ability to autonomously follow a wall.
 The script should handle wall following for the right wall, the left wall, both walls, and

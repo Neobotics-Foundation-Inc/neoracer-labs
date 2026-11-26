@@ -1,11 +1,15 @@
 """
-MIT BWSI Autonomous RACECAR
-MIT License
-racecar-neo-outreach-labs
+Neobotics Foundation Inc.
+GPLv3 License
+neoracer-labs/
 
 File Name: demo.py
 
 Title: Demo RACECAR program
+
+Author: Neobotics
+
+Version: 0.9.0
 
 Purpose: To verify that basic RACECAR functions work properly and the student has set up
 the system correctly to run Python scripts with the RACECAR start/update paradigm in the

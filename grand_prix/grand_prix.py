@@ -1,13 +1,15 @@
 """
-MIT BWSI Autonomous RACECAR
-MIT License
-racecar-neo-outreach-labs
+Neobotics Foundation Inc.
+GPLv3 License
+neoracer-labs/grand_prix/
 
 File Name: grand_prix.py
 
 Title: Grand Prix Day!
 
 Author: [PLACEHOLDER] << [Write your name or team name here]
+
+Version: 0.9.0
 
 Purpose: Write a script to enable fully autonomous behavior from the RACECAR. The
 RACECAR will traverse the obstacle course autonomously without human intervention.

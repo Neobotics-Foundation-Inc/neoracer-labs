@@ -1,13 +1,15 @@
 """
-MIT BWSI Autonomous RACECAR
-MIT License
-racecar-neo-outreach-labs
+Neobotics Foundation Inc.
+GPLv3 License
+neoracer-labs/lab_a/
 
 File Name: lab_a.py
 
 Title: Lab A - Printing Statements
 
 Author: [PLACEHOLDER] << [Write your name or team name here]
+
+Version: 0.9.0
 
 Purpose: Print several statements to the terminal window and gain an understanding
 of how the start(), update() and update_slow() function work. Complete the lines of

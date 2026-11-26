@@ -1,13 +1,15 @@
 """
-MIT BWSI Autonomous RACECAR
-MIT License
-racecar-neo-outreach-labs
+Neobotics Foundation Inc.
+GPLv3 License
+neoracer-labs/lab_g/
 
 File Name: lab_g.py
 
 Title: Lab G - Autonomous Parking
 
 Author: [PLACEHOLDER] << [Write your name or team name here]
+
+Version: 0.9.0
 
 Purpose: This script provides the RACECAR with the ability to autonomously detect an orange
 cone and then drive and park 30cm away from the cone. Complete the lines of code under the 

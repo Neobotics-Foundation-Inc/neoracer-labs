@@ -1,11 +1,15 @@
 """
-MIT BWSI Autonomous RACECAR
-MIT License
-racecar-neo-outreach-labs
+Neobotics Foundation Inc.
+GPLv3 License
+neoracer-labs/utility/
 
 File Name: hsv-p_tuner.py
 
 Title: HSV + P-Controller Tuner (single-window Tk edition)
+
+Author: Neobotics
+
+Version: 0.9.0
 
 Purpose: Live-tune the HSV color threshold and P-controller gains used by the
 line-following labs. All UI lives in one Tk window: sliders on the left, mask
