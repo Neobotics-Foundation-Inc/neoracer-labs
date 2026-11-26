@@ -5,19 +5,18 @@ neoracer-labs/
 
 File Name: demo.py
 
-Title: Demo RACECAR program
+Title: Demo NeoRacer program
 
 Author: Neobotics
 
 Version: 0.9.0
 
-Purpose: To verify that basic RACECAR functions work properly and the student has set up
-the system correctly to run Python scripts with the RACECAR start/update paradigm in the
-Unity simulator.
+Purpose: To verify that the basic NeoRacer functions work and the student has set up
+the system correctly to run Python scripts with the start/update paradigm on the car.
 
-Expected Outcome: Terminal output and RACECAR movement occurs when buttons are pressed
+Expected Outcome: Terminal output and NeoRacer movement occurs when buttons are pressed
 - When the "A" button is pressed, print a message to the terminal window
-- When the "B" button is pressed, RACECAR moves forward and to the right
+- When the "B" button is pressed, NeoRacer moves forward and to the right
 """
 
 ########################################################################################
@@ -40,7 +39,7 @@ isDriving = False
 # Functions
 ########################################################################################
 
-# [FUNCTION] The start function is run once every time the start button is pressed
+# [FUNCTION] The start function is run once when the program starts
 def start():
     # If we use a global variable in our function, we must list it at
     # the beginning of our function like this
@@ -55,8 +54,8 @@ def start():
     rc.drive.stop()
 
 # [FUNCTION] After start() is run, this function is run once every frame (ideally at
-# 60 frames per second or slower depending on processing speed) until the back button
-# is pressed  
+# 60 frames per second or slower depending on processing speed) until Ctrl+C is pressed
+# in the terminal
 def update():
     
     global counter

@@ -16,7 +16,7 @@ line-following labs. All UI lives in one Tk window: sliders on the left, mask
 and camera/contour previews on the right, line-position plot below.
 
 Controls:
-    Right trigger = release RACECAR failsafe (drive)
+    Right trigger = release NeoRacer failsafe (drive)
     A button      = save tuned HSV + speed/angle values
     B button      = print current speed/angle
 """
@@ -52,7 +52,7 @@ H_low, H_high = 0, 179
 S_low, S_high = 0, 255
 V_low, V_high = 0, 255
 
-# Camera frame dimensions used in update() — larger than v1's 320x240 so
+# Camera frame dimensions used in update(), larger than v1's 320x240 so
 # the previews are readable inside the embedded Tk window.
 FRAME_W, FRAME_H = 640, 480
 
@@ -90,7 +90,7 @@ mask_label = None
 display_label = None
 latest_mask_bgr = None
 latest_display_bgr = None
-# Keep PhotoImage refs alive — Tk drops images when the ref is GC'd.
+# Keep PhotoImage refs alive. Tk drops images when the ref is GC'd.
 _mask_photo_ref = None
 _display_photo_ref = None
 
@@ -185,7 +185,7 @@ def build_tk_ui():
     # Hide until start() flips _ui_visible_requested. Keeps the terminal
     # uncovered so the user can read the start-message prompts first.
     root.withdraw()
-    # Target screen size — covers the bulk of a 1920x1080 HDMI display.
+    # Target screen size. It covers the bulk of a 1920x1080 HDMI display.
     # We re-assert geometry after content packs (see end of build_tk_ui).
     root.geometry("1000x620+30+30")
 
@@ -209,7 +209,7 @@ def build_tk_ui():
     left.grid(row=0, column=0, sticky='nw', padx=10, pady=10)
     tk.Frame(left, bg='black', width=480, height=1).pack(side='top')
 
-    tk.Label(left, text="RACECAR Neo Demo UI", background='black',
+    tk.Label(left, text="NeoRacer Demo UI", background='black',
              foreground='red', font=title_font).pack()
     tk.Label(left, text="Line Following Tuner App", background='black',
              foreground='orange', font=subtitle_font).pack()
@@ -337,7 +337,7 @@ def update_contour(img):
         contour_area = 0
         return
 
-    # Live HSV bounds from the sliders — changes take effect immediately,
+    # Live HSV bounds from the sliders. Changes take effect immediately,
     # no controller-button save step required.
     contours = rc_utils.find_contours(image,
                                       (H_low, S_low, V_low),
@@ -358,27 +358,27 @@ def update_contour(img):
 
 
 ########################################################################################
-# RACECAR start/update
+# NeoRacer start/update
 ########################################################################################
 
-# [FUNCTION] The start function is run once every time the start button is pressed
+# [FUNCTION] The start function is run once when the program starts
 def start():
     global _ui_visible_requested
     rc.drive.set_speed_angle(0, 0)
     _ui_visible_requested = True  # _tk_refresh will deiconify the window
     print(
-        ">> RACECAR Neo OneShot Demo - Line Follower with Live HSV Tuning\n"
+        ">> NeoRacer OneShot Demo - Line Follower with Live HSV Tuning\n"
         "\n"
-        "Slider changes take effect immediately — no save step needed.\n"
+        "Slider changes take effect immediately. No save step is needed.\n"
         "\n"
         "Controls:\n"
-        "   Right trigger = release RACECAR failsafe (drive)\n"
+        "   Right trigger = release NeoRacer failsafe (drive)\n"
         "   A button = print current HSV + speed/angle to terminal\n"
         "   B button = print system speed/angle"
     )
 
 
-# [FUNCTION] Tune HSV values to RACECAR camera while in main loop
+# [FUNCTION] Tune HSV values to the NeoRacer camera while in main loop
 def update():
     global loc_history, speed, angle, latest_mask_bgr
 
@@ -396,7 +396,7 @@ def update():
 
     update_contour(img)
 
-    # P-controller — reads live tune_angle directly from the slider.
+    # P-controller. It reads live tune_angle directly from the slider.
     # Setpoint is the horizontal center of the processed frame; must scale
     # with FRAME_W (a contour exactly centered must yield error=0, else
     # the car steers hard one direction even when it's lined up correctly).
@@ -452,8 +452,8 @@ if __name__ == "__main__":
 
     # rc.go() spins the executor synchronously; run it off-main so Tk owns
     # the main thread. rc's internal __run_thread continues to call update()
-    # on its own. rc.go() never returns until BACK+START exits the program,
-    # so daemon=True ensures it dies with the Tk window.
+    # on its own. rc.go() does not return while the program runs, so daemon=True
+    # ensures the thread dies with the Tk window.
     rc_thread = threading.Thread(target=rc.go, daemon=True)
     rc_thread.start()
 

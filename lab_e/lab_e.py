@@ -11,32 +11,30 @@ Author: [PLACEHOLDER] << [Write your name or team name here]
 
 Version: 0.9.0
 
-Purpose: Write a script to enable autonomous behavior from the RACECAR. When
-the RACECAR sees a stoplight object (colored cube in the simulator), respond accordingly
+Purpose: Write a script to enable autonomous behavior from the NeoRacer. When
+the NeoRacer sees a stoplight, respond accordingly
 by going straight, turning right, turning left, or stopping. Append instructions to the
-queue depending on whether the position of the RACECAR relative to the stoplight reaches
+queue depending on whether the position of the NeoRacer relative to the stoplight reaches
 a certain threshold, and be able to respond to traffic lights at consecutive intersections. 
 
-Expected Outcome: When the user runs the script, the RACECAR should control itself using
+Expected Outcome: When the user runs the script, the NeoRacer should control itself using
 the following constraints:
-- When the RACECAR sees a BLUE traffic light, make a right turn at the intersection
-- When the RACECAR sees an ORANGE traffic light, make a left turn at the intersection
-- When the RACECAR sees a GREEN traffic light, go straight
-- When the RACECAR sees a RED traffic light, stop moving,
-- When the RACECAR sees any other traffic light colors, stop moving.
+- When the NeoRacer sees a BLUE traffic light, make a right turn at the intersection
+- When the NeoRacer sees an ORANGE traffic light, make a left turn at the intersection
+- When the NeoRacer sees a GREEN traffic light, go straight
+- When the NeoRacer sees a RED traffic light, stop moving,
+- When the NeoRacer sees any other traffic light colors, stop moving.
 
-Considerations: Since the user is not controlling the RACECAR, be sure to consider the
+Considerations: Since the user is not controlling the NeoRacer, be sure to consider the
 following scenarios:
-- What should the RACECAR do if it sees two traffic lights, one at the current intersection
+- What should the NeoRacer do if it sees two traffic lights, one at the current intersection
 and the other at the intersection behind it?
 - What should be the constraint for adding the instructions to the queue? Traffic light position,
 traffic light area, or both?
 - How often should the instruction-adding function calls be? Once, twice, or 60 times a second?
 
-Environment: Test your code using the level "Neo Labs > Lab 3: Stoplight Challenge".
-By default, the traffic lights should direct you in a counterclockwise circle around the course.
-For testing purposes, you may change the color of the traffic light by first left-clicking to 
-select and then right clicking on the light to scroll through available colors.
+Environment: A course with intersections and a stoplight prop at each one. The prop shows
+one color at a time. Change its color to test each case.
 """
 
 ########################################################################################
@@ -56,7 +54,7 @@ rc = racecar_core.create_racecar()
 
 # >> Constants
 # The smallest contour we will recognize as a valid contour (Adjust threshold!)
-MIN_CONTOUR_AREA = ___
+MIN_CONTOUR_AREA = _____
 
 # TODO Part 1: Determine the HSV color threshold pairs for ORANGE, GREEN, RED, YELLOW, and PURPLE
 # Colors, stored as a pair (hsv_min, hsv_max)
@@ -99,7 +97,7 @@ def update_contour():
         # Display the image to the screen
         rc.display.show_color_image(image)
 
-# [FUNCTION] The start function is run once every time the start button is pressed
+# [FUNCTION] The start function is run once when the program starts
 def start():
 
     # Set initial driving speed and angle
@@ -110,7 +108,7 @@ def start():
 
     # Print start message (You may edit this to be more informative!)
     print(
-        ">> Lab 3 - Stoplight Challenge\n"
+        ">> Lab E - Stoplight Challenge\n"
         "\n"
         "Controls:\n"
         "   A button = print current speed and angle\n"
@@ -118,8 +116,8 @@ def start():
     )
 
 # [FUNCTION] After start() is run, this function is run once every frame (ideally at
-# 60 frames per second or slower depending on processing speed) until the back button
-# is pressed  
+# 60 frames per second or slower depending on processing speed) until Ctrl+C is pressed
+# in the terminal
 def update():
     global queue
 
@@ -134,9 +132,9 @@ def update():
     # ... You may need more elif/else statements
 
     # TODO Part 3: Implement a way to execute instructions from the queue once they have been placed
-    # by the traffic light detector logic (Hint: Lab 2)
+    # by the traffic light detector logic (Hint: Lab D)
 
-    # Send speed and angle commands to the RACECAR
+    # Send speed and angle commands to the NeoRacer
     rc.drive.set_speed_angle(speed, angle)
 
     # Print the current speed and angle when the A button is held down
@@ -162,11 +160,11 @@ def turnLeft():
 
     # TODO Part 5: Complete the rest of this function with the instructions to make a left turn
 
-# [FUNCTION] Appends the correct instructions to go straight through the intersectionto the queue
+# [FUNCTION] Appends the correct instructions to go straight through the intersection to the queue
 def goStraight():
     global queue
 
-    # TODO Part 6: Complete the rest of this function with the instructions to make a left turn
+    # TODO Part 6: Complete the rest of this function with the instructions to go straight
 
 # [FUNCTION] Clears the queue to stop all actions
 def stopNow():

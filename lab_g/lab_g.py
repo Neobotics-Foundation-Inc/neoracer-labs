@@ -11,20 +11,19 @@ Author: [PLACEHOLDER] << [Write your name or team name here]
 
 Version: 0.9.0
 
-Purpose: This script provides the RACECAR with the ability to autonomously detect an orange
+Purpose: This script provides the NeoRacer with the ability to autonomously detect an orange
 cone and then drive and park 30cm away from the cone. Complete the lines of code under the 
 #TODO indicators to complete the lab.
 
-Expected Outcome: When the user runs the script, the RACECAR should be fully autonomous
-and drive without the assistance of the user. The RACECAR drives according to the following
+Expected Outcome: When the user runs the script, the NeoRacer should be fully autonomous
+and drive without the assistance of the user. The NeoRacer drives according to the following
 rules:
-- The RACECAR detects the orange cone using its color camera, and can navigate to the cone
+- The NeoRacer detects the orange cone using its color camera, and can navigate to the cone
 and park using its color camera and LIDAR sensors.
-- The RACECAR should operate on a state machine with multiple states. There should not be
+- The NeoRacer should operate on a state machine with multiple states. There should not be
 a terminal state. If there is no cone in the environment, the program should not crash.
 
-Environment: Test your code using the level "Neo Labs > Lab G: Cone Parking".
-Click on the screen to move the orange cone around the screen.
+Environment: An orange cone on an open floor. Move the cone between runs.
 """
 
 ########################################################################################
@@ -70,10 +69,10 @@ def update_contour():
 
     # TODO Part 2: Complete this function by cropping the image to the bottom of the screen,
     # analyzing for contours of interest, and returning the center of the contour and the
-    # area of the contour for the color of line we should follow (Hint: Lab 3)
+    # area of the contour for the orange cone (Hint: Lab F)
 
 
-# [FUNCTION] The start function is run once every time the start button is pressed
+# [FUNCTION] The start function is run once when the program starts
 def start():
     global speed
     global angle
@@ -99,8 +98,8 @@ def start():
 
 
 # [FUNCTION] After start() is run, this function is run once every frame (ideally at
-# 60 frames per second or slower depending on processing speed) until the back button
-# is pressed  
+# 60 frames per second or slower depending on processing speed) until Ctrl+C is pressed
+# in the terminal
 def update():
     global speed
     global angle
@@ -109,11 +108,10 @@ def update():
     update_contour()
 
     # TODO Part 3: Park the car 30cm away from the closest orange cone.
-    # You may use a state machine and a combination of sensors (color camera,
-    # or LIDAR to do so). Depth camera is not allowed at this time to match the
-    # physical RACECAR Neo.
+    # You may use a state machine and the color camera, the lidar, or both. The
+    # NeoRacer has no depth camera, and rc.camera.get_depth_image() raises NotImplementedError.
 
-    # Set the speed and angle of the RACECAR after calculations have been complete
+    # Set the speed and angle of the NeoRacer after calculations have been complete
     rc.drive.set_speed_angle(speed, angle)
 
     # Print the current speed and angle when the A button is held down

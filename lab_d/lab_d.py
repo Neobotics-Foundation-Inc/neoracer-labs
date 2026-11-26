@@ -11,11 +11,11 @@ Author: [PLACEHOLDER] << [Write your name or team name here]
 
 Version: 0.9.0
 
-Purpose: Create a script to enable semi-autonomous driving for the RACECAR. Button presses
-enable a series of instructions sent to the RACECAR, which enable it to drive in various shapes.
+Purpose: Create a script to enable semi-autonomous driving for the NeoRacer. Button presses
+enable a series of instructions sent to the NeoRacer, which enable it to drive in various shapes.
 Complete the lines of code under the #TODO indicators to complete the lab.
 
-Expected Outcome: When the user runs the script, they are able to control the RACECAR
+Expected Outcome: When the user runs the script, they are able to control the NeoRacer
 using the following keys:
 - When the "A" button is pressed, drive through the obstacle "Zigzag"
 - When the "B" button is pressed, drive through the obstacle "Spiral"
@@ -44,7 +44,7 @@ queue = []
 # Functions
 ########################################################################################
 
-# [FUNCTION] The start function is run once every time the start button is pressed
+# [FUNCTION] The start function is run once when the program starts
 def start():
     # Begin at a full stop
     rc.drive.stop()
@@ -54,7 +54,7 @@ def start():
 
     # Print start message
     print(
-        ">> Lab D - Driving in Mazes\n"
+        ">> Lab D - Driving in Shapes\n"
         "\n"
         "Controls:\n"
         "   A button = drive through obstacle: \"Zigzag\"\n"
@@ -65,8 +65,8 @@ def start():
 
 
 # [FUNCTION] After start() is run, this function is run once every frame (ideally at
-# 60 frames per second or slower depending on processing speed) until the back button
-# is pressed  
+# 60 frames per second or slower depending on processing speed) until Ctrl+C is pressed
+# in the terminal
 def update():
     global queue
 
@@ -87,8 +87,12 @@ def update():
         drive_maze()
 
     # TODO Part 1: Analyze the following code segment that executes instructions from the queue.
-    # Fill in the blanks with the missing variable assignments and indicies according to the
+    # Fill in the blanks with the missing variable assignments and indices according to the
     # behavior described by the comment below.
+
+    # With an empty queue, the car stands still
+    speed = 0
+    angle = 0
 
     # If the queue is not empty, follow the current drive instruction
     if len(queue) > 0:
@@ -98,12 +102,12 @@ def update():
         if queue[_][_] <= 0:
             queue.pop(0)
 
-    # Send speed and angle commands to the RACECAR
+    # Send speed and angle commands to the NeoRacer
     rc.drive.set_speed_angle(speed, angle)
 
 
 # [FUNCTION] When the function is called, clear the queue, then place instructions
-# inside of the queue that cause the RACECAR to drive in the zigzag
+# inside of the queue that cause the NeoRacer to drive in the zigzag
 def drive_zigzag():
     global queue
 
@@ -112,12 +116,12 @@ def drive_zigzag():
     queue.clear()
 
     # TODO Part 2: Append the correct variables in the correct order in order
-    # for the RACECAR to drive in the "Zigzag" obstacle course
+    # for the NeoRacer to drive in the "Zigzag" obstacle course
     # [Hint] queue.append([time, speed, angle])
 
 
 # [FUNCTION] When the function is called, clear the queue, then place instructions
-# inside of the queue that cause the RACECAR to drive in the spiral
+# inside of the queue that cause the NeoRacer to drive in the spiral
 def drive_spiral():
     global queue
 
@@ -125,16 +129,16 @@ def drive_spiral():
 
     queue.clear()
 
-    # TODO Part 3: Append the instructions into the queue that represent the RACECAR
+    # TODO Part 3: Append the instructions into the queue that represent the NeoRacer
     # driving in the "Spiral" obstacle course
 
 
 # [FUNCTION] When the function is called, clear the queue, then place instructions 
-# inside of the queue that cause the RACECAR to drive through the hallway
+# inside of the queue that cause the NeoRacer to drive through the hallway
 def drive_hallway():
     global queue
 
-    # TODO Part 4: Create constants that represent the RACECAR driving through
+    # TODO Part 4: Create constants that represent the NeoRacer driving through
     # the "Hallway" obstacle course, and then append the instructions in the
     # correct order into the queue for execution
 
@@ -142,11 +146,11 @@ def drive_hallway():
 
 
 # [FUNCTION] When the function is called, clear the queue, then place instructions 
-# inside of the queue that cause the RACECAR to drive in the maze
+# inside of the queue that cause the NeoRacer to drive in the maze
 def drive_maze():
     global queue
 
-    # TODO Part 5: Create constants that represent the RACECAR driving through
+    # TODO Part 5: Create constants that represent the NeoRacer driving through
     # different parts of the maze, and then append the instructions in the
     # correct order into the queue for execution
 

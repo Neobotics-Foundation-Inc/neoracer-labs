@@ -65,7 +65,7 @@ def _open_window():
 def _close_window():
     """Tear down the shared window if it exists. Safe to call when nothing is open."""
     cv.destroyWindow(WINDOW_NAME)
-    # destroyWindow only queues the teardown — pump the event loop so the
+    # destroyWindow only queues the teardown. Pump the event loop so the
     # window actually disappears before update() returns.
     cv.waitKey(1)
 
@@ -127,7 +127,7 @@ def _render_lidar(samples):
 
 def start():
     """
-    This function is run once every time the start button is pressed.
+    This function is run once when the program starts.
     """
     global max_speed
     global display_mode
@@ -158,14 +158,14 @@ def start():
 
 def update():
     """
-    After start() is run, this function is run every frame until the back button
-    is pressed.
+    After start() is run, this function is run every frame until Ctrl+C is pressed
+    in the terminal.
     """
     global max_speed
     global display_mode
 
     # Drive: left stick Y for throttle, right stick X for steering.
-    # Left/right bumpers are intentionally unbound — the driver mux owns them.
+    # Left/right bumpers are intentionally unbound. The driver mux owns them.
     _, left_y = rc.controller.get_joystick(rc.controller.Joystick.LEFT)
     right_x, _ = rc.controller.get_joystick(rc.controller.Joystick.RIGHT)
     rc.drive.set_speed_angle(left_y, right_x)

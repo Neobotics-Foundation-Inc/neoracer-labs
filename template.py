@@ -37,13 +37,13 @@ rc = racecar_core.create_racecar()
 # Functions
 ########################################################################################
 
-# [FUNCTION] The start function is run once every time the start button is pressed
+# [FUNCTION] The start function is run once when the program starts
 def start():
     pass # Remove 'pass' and write your source code for the start() function here
 
 # [FUNCTION] After start() is run, this function is run once every frame (ideally at
-# 60 frames per second or slower depending on processing speed) until the back button
-# is pressed  
+# 60 frames per second or slower depending on processing speed) until Ctrl+C is pressed
+# in the terminal
 def update():
     pass # Remove 'pass' and write your source code for the update() function here
 
@@ -51,7 +51,7 @@ def update():
 # default. It is especially useful for printing debug messages, since printing a 
 # message every frame in update is computationally expensive and creates clutter
 def update_slow():
-    pass # Remove 'pass and write your source code for the update_slow() function here
+    pass # Remove 'pass' and write your source code for the update_slow() function here
 
 
 ########################################################################################

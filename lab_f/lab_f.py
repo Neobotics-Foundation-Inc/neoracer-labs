@@ -11,18 +11,18 @@ Author: [PLACEHOLDER] << [Write your name or team name here]
 
 Version: 0.9.0
 
-Purpose: Write a script to enable fully autonomous behavior from the RACECAR. The
-RACECAR should automatically identify the color of a line it sees, then drive on the
-center of the line throughout the obstacle course. The RACECAR should also identify
+Purpose: Write a script to enable fully autonomous behavior from the NeoRacer. The
+NeoRacer should automatically identify the color of a line it sees, then drive on the
+center of the line throughout the obstacle course. The NeoRacer should also identify
 color changes, following colors with higher priority than others. Complete the lines 
 of code under the #TODO indicators to complete the lab.
 
-Expected Outcome: When the user runs the script, they are able to control the RACECAR
+Expected Outcome: When the user runs the script, they are able to control the NeoRacer
 using the following keys:
-- When the right trigger is pressed, the RACECAR moves forward at full speed
-- When the left trigger is pressed, the RACECAR, moves backwards at full speed
-- The angle of the RACECAR should only be controlled by the center of the line contour
-- The RACECAR sees the color RED as the highest priority, then GREEN, then BLUE
+- When the right trigger is pressed, the NeoRacer moves forward at full speed
+- When the left trigger is pressed, the NeoRacer, moves backwards at full speed
+- The angle of the NeoRacer should only be controlled by the center of the line contour
+- The NeoRacer sees the color RED as the highest priority, then GREEN, then BLUE
 """
 
 ########################################################################################
@@ -89,7 +89,7 @@ def update_contour():
         # Display the image to the screen
         rc.display.show_color_image(image)
 
-# [FUNCTION] The start function is run once every time the start button is pressed
+# [FUNCTION] The start function is run once when the program starts
 def start():
     global speed
     global angle
@@ -106,7 +106,7 @@ def start():
 
     # Print start message
     print(
-        ">> Lab 2A - Color Image Line Following\n"
+        ">> Lab F - Line Follower\n"
         "\n"
         "Controls:\n"
         "   Right trigger = accelerate forward\n"
@@ -116,12 +116,12 @@ def start():
     )
 
 # [FUNCTION] After start() is run, this function is run once every frame (ideally at
-# 60 frames per second or slower depending on processing speed) until the back button
-# is pressed  
+# 60 frames per second or slower depending on processing speed) until Ctrl+C is pressed
+# in the terminal
 def update():
     """
-    After start() is run, this function is run every frame until the back button
-    is pressed
+    After start() is run, this function is run every frame until Ctrl+C is pressed
+    in the terminal
     """
     global speed
     global angle
@@ -129,8 +129,8 @@ def update():
     # Search for contours in the current color image
     update_contour()
 
-    # TODO Part 3: Determine the angle that the RACECAR should receive based on the current 
-    # position of the center of line contour on the screen. Hint: The RACECAR should drive in
+    # TODO Part 3: Determine the angle that the NeoRacer should receive based on the current 
+    # position of the center of line contour on the screen. Hint: The NeoRacer should drive in
     # a direction that moves the line back to the center of the screen.
 
     # Choose an angle based on contour_center

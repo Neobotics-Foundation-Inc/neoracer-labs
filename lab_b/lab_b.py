@@ -18,7 +18,7 @@ code under the #TODO indicators to complete the lab.
 Expected Outcome: At the end of the lab, running the script will print several
 statements to the terminal window based on controller input:
 - When the "A" button is pressed, print "Hello World!" to the terminal window once
-- When the "B" button is released, print "Welcome to RACECAR <your name>!" once
+- When the "B" button is released, print "Welcome to the NeoRacer <your name>!" once
 - When the "X" button is pressed, print the current elapsed time of the script to the 
 terminal window in seconds. The script should continue printing time updates if the
 button is held down. Round the time to 2 decimal places.
@@ -49,18 +49,18 @@ counter = 0
 # Functions
 ########################################################################################
 
-# [FUNCTION] The start function is run once every time the start button is pressed
+# [FUNCTION] The start function is run once when the program starts
 def start():
     global your_name
 
     # TODO Part 1: Modify the variable below to your name. Modify the print statement,
-    # such that when run, the program prints "Hello {your name}, welcome to RACECAR!"
+    # such that when run, the program prints "Hello {your name}, welcome to the NeoRacer!"
     your_name = "_____"
-    # print(f"Welcome {_____}, welcome to RACECAR!")
+    # print(f"Hello {_____}, welcome to the NeoRacer!")
 
 # [FUNCTION] After start() is run, this function is run once every frame (ideally at
-# 60 frames per second or slower depending on processing speed) until the back button
-# is pressed  
+# 60 frames per second or slower depending on processing speed) until Ctrl+C is pressed
+# in the terminal
 def update():
     global counter
     counter += rc.get_delta_time()
@@ -70,12 +70,12 @@ def update():
     if rc.controller.was_pressed(rc.controller.Button.A):
         print("_____")
 
-    # TODO Part 3: Modify the following if statement to print out "Welcome to RACECAR
+    # TODO Part 3: Modify the following if statement to print out "Welcome to the NeoRacer
     # <your name>!" after the "B" button has been released on the keyboard.
     if rc.controller._____(rc.controller.Button._):
-        print(f"Welcome to RACECAR {_____}!")
+        print(f"Welcome to the NeoRacer {_____}!")
 
-    # TODO Part 4: Modify the following if statment to print out the current elapsed 
+    # TODO Part 4: Modify the following if statement to print out the current elapsed 
     # time of the script to the terminal window in seconds when the X button is pressed. 
     # The script should continue printing time updates if the button is held down. 
     # Round the time to 2 decimal places.
