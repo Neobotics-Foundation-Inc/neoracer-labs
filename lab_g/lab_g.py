@@ -66,6 +66,8 @@ def update_contour():
     global contour_center
     global contour_area
 
+    # On the NeoRacer the first call subscribes to the camera and can wait up to a second
+    # for the first frame. Later calls return the newest frame at once
     image = rc.camera.get_color_image()
 
     # TODO Part 2: Complete this function by cropping the image to the bottom of the screen,
@@ -116,6 +118,10 @@ def update():
     # TODO Part 3: Park the car 30cm away from the closest orange cone.
     # You may use a state machine and the color camera, the lidar, or both. The
     # NeoRacer has no depth camera, and rc.camera.get_depth_image() raises NotImplementedError.
+    # rc.lidar.get_samples() returns 1,440 distances in cm, one every 0.25 degrees. Index 0
+    # is straight ahead and the index grows clockwise, so index 360 is the right side and
+    # index 1080 the left. The rear 90 degrees (about indices 540 to 900) have no return
+    # and read 0.
 
     # Set the speed and angle of the NeoRacer after calculations have been complete
     rc.drive.set_speed_angle(speed, angle)

@@ -87,7 +87,7 @@ def _next_mode():
 
 
 def _annotate_detections(image, detections):
-    """Return a copy of image with EdgeTPU bounding boxes / labels drawn on."""
+    """Return a copy of image with the detection boxes and labels drawn on."""
     annotated = image.copy()
     for det in detections:
         cx, cy, w, h = det.bbox
@@ -145,6 +145,8 @@ def start():
         "    Steering stick (right stick X) = steer left / right\n"
         "    Each flip of the mode switch down = next view: forward camera (fullscreen),\n"
         "        camera + detections overlay, lidar scan, IMU data once per second, off\n"
+        "    The detections overlay needs the car's object detection, which is off at boot.\n"
+        "        Turn it on from the car's web page on port 8080\n"
         f"    Max speed is fixed at {MAX_SPEED}, about {MAX_SPEED * 6:.1f} m/s\n"
     )
 

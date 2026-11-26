@@ -47,6 +47,11 @@ import racecar_core
 
 rc = racecar_core.create_racecar()
 
+# The NeoRacer lidar: rc.lidar.get_samples() returns 1,440 distances in cm, one every
+# 0.25 degrees. Index 0 is straight ahead and the index grows clockwise, so index 360 is
+# the right side and index 1080 the left. The rear 90 degrees (about indices 540 to 900)
+# have no return and read 0.
+
 # Declare any global variables here
 
 

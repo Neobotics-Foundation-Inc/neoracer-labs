@@ -86,6 +86,8 @@ def update_contour():
     global contour_center
     global contour_area
 
+    # On the NeoRacer the first call subscribes to the camera and can wait up to a second
+    # for the first frame. Later calls return the newest frame at once
     image = rc.camera.get_color_image()
 
     if image is None:
