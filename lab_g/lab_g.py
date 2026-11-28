@@ -1,7 +1,7 @@
 """
-MIT BWSI Autonomous RACECAR
-MIT License
-racecar-neo-outreach-labs
+Neobotics Foundation Inc.
+GPLv3 License
+neoracer-labs/lab_g/
 
 File Name: lab_g.py
 
@@ -9,20 +9,22 @@ Title: Lab G - Autonomous Parking
 
 Author: [PLACEHOLDER] << [Write your name or team name here]
 
-Purpose: This script provides the RACECAR with the ability to autonomously detect an orange
+Version: 0.9.0
+
+Purpose: This script provides the NeoRacer with the ability to autonomously detect an orange
 cone and then drive and park 30cm away from the cone. Complete the lines of code under the 
 #TODO indicators to complete the lab.
 
-Expected Outcome: When the user runs the script, the RACECAR should be fully autonomous
-and drive without the assistance of the user. The RACECAR drives according to the following
+Expected Outcome: When the user runs the script, the NeoRacer should be fully autonomous
+and drive without the assistance of the user. The NeoRacer drives according to the following
 rules:
-- The RACECAR detects the orange cone using its color camera, and can navigate to the cone
+- The NeoRacer detects the orange cone using its color camera, and can navigate to the cone
 and park using its color camera and LIDAR sensors.
-- The RACECAR should operate on a state machine with multiple states. There should not be
+- The NeoRacer should operate on a state machine with multiple states. There should not be
 a terminal state. If there is no cone in the environment, the program should not crash.
+- The NeoRacer follows the program only while the handset's mode switch is down
 
-Environment: Test your code using the level "Neo Labs > Lab G: Cone Parking".
-Click on the screen to move the orange cone around the screen.
+Environment: An orange cone on an open floor. Move the cone between runs.
 """
 
 ########################################################################################
@@ -64,14 +66,16 @@ def update_contour():
     global contour_center
     global contour_area
 
+    # On the NeoRacer the first call subscribes to the camera and can wait up to a second
+    # for the first frame. Later calls return the newest frame at once
     image = rc.camera.get_color_image()
 
     # TODO Part 2: Complete this function by cropping the image to the bottom of the screen,
     # analyzing for contours of interest, and returning the center of the contour and the
-    # area of the contour for the color of line we should follow (Hint: Lab 3)
+    # area of the contour for the orange cone (Hint: Lab F)
 
 
-# [FUNCTION] The start function is run once every time the start button is pressed
+# [FUNCTION] The start function is run once when the program starts
 def start():
     global speed
     global angle
@@ -79,6 +83,10 @@ def start():
     # Initialize variables
     speed = 0
     angle = 0
+
+    # The NeoRacer's full speed (1.0) is about 6 m/s. Uncomment the next line and pick a
+    # lower limit for your room. Every speed the program sets is then scaled by it
+    # rc.drive.set_max_speed(0.25)
 
     # Set initial driving speed and angle
     rc.drive.set_speed_angle(speed, angle)
@@ -91,14 +99,15 @@ def start():
         ">> Lab G - Autonomous Parking\n"
         "\n"
         "Controls:\n"
-        "   A button = print current speed and angle\n"
-        "   B button = print contour center and area"
+        "   Mode switch down = the program drives the car\n"
+        "   Mode switch up = the handset drives the car\n"
+        "   Speed, angle and the cone position print every half second"
     )
 
 
 # [FUNCTION] After start() is run, this function is run once every frame (ideally at
-# 60 frames per second or slower depending on processing speed) until the back button
-# is pressed  
+# 60 frames per second or slower depending on processing speed) until Ctrl+C is pressed
+# in the terminal
 def update():
     global speed
     global angle
@@ -107,23 +116,15 @@ def update():
     update_contour()
 
     # TODO Part 3: Park the car 30cm away from the closest orange cone.
-    # You may use a state machine and a combination of sensors (color camera,
-    # or LIDAR to do so). Depth camera is not allowed at this time to match the
-    # physical RACECAR Neo.
+    # You may use a state machine and the color camera, the lidar, or both. The
+    # NeoRacer has no depth camera, and rc.camera.get_depth_image() raises NotImplementedError.
+    # rc.lidar.get_samples() returns 1,440 distances in cm, one every 0.25 degrees. Index 0
+    # is straight ahead and the index grows clockwise, so index 360 is the right side and
+    # index 1080 the left. The rear 90 degrees (about indices 540 to 900) have no return
+    # and read 0.
 
-    # Set the speed and angle of the RACECAR after calculations have been complete
+    # Set the speed and angle of the NeoRacer after calculations have been complete
     rc.drive.set_speed_angle(speed, angle)
-
-    # Print the current speed and angle when the A button is held down
-    if rc.controller.is_down(rc.controller.Button.A):
-        print("Speed:", speed, "Angle:", angle)
-
-    # Print the center and area of the largest contour when B is held down
-    if rc.controller.is_down(rc.controller.Button.B):
-        if contour_center is None:
-            print("No contour found")
-        else:
-            print("Center:", contour_center, "Area:", contour_area)
 
 
 # [FUNCTION] update_slow() is similar to update() but is called once per second by
@@ -141,13 +142,13 @@ def update_slow():
     else:
         # If an image is found but no contour is found, print all dashes
         if contour_center is None:
-            print("-" * 32 + " : area = " + str(contour_area))
+            print("-" * 32 + f" : area = {contour_area}, speed = {speed:.2f}, angle = {angle:.2f}")
 
         # Otherwise, print a line of dashes with a | indicating the contour x-position
         else:
             s = ["-"] * 32
             s[int(contour_center[1] / 20)] = "|"
-            print("".join(s) + " : area = " + str(contour_area))
+            print("".join(s) + f" : area = {contour_area}, speed = {speed:.2f}, angle = {angle:.2f}")
 
 
 ########################################################################################

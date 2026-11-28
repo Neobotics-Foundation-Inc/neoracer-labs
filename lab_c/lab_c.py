@@ -1,30 +1,34 @@
 """
-MIT BWSI Autonomous RACECAR
-MIT License
-racecar-neo-outreach-labs
+Neobotics Foundation Inc.
+GPLv3 License
+neoracer-labs/lab_c/
 
 File Name: lab_c.py
 
-Title: Lab C - RACECAR Controller
+Title: Lab C - NeoRacer Controller
 
 Author: [PLACEHOLDER] << [Write your name or team name here]
 
+Version: 0.9.0
+
 Purpose: Using a Python script and the data polled from the controller module,
-write code to replicate a manual control scheme for the RACECAR. Gain a mastery
+write code to replicate a manual control scheme for the NeoRacer. Gain a mastery
 in using conditional statements, controller functions and an understanding in the
 rc.drive.set_speed_angle() function. Complete the lines of code under the #TODO indicators 
 to complete the lab.
 
-Expected Outcome: When the user runs the script, they are able to control the RACECAR
-using the following keys:
-- When the right trigger is pressed, the RACECAR drives forward
-- When the left trigger is pressed, the RACECAR drives backward
-- When the left joystick's x-axis has a value of greater than 0, the RACECAR's wheels turns to the right
-- When the left joystick's x-axis has a value of less than 0, the RACECAR's wheels turns to the left
-- When the "A" button is pressed, increase the speed and print the current speed to the terminal window
-- When the "B" button is pressed, reduce the speed and print the current speed to the terminal window
-- When the "X" button is pressed, increase the turning angle and print the current turning angle to the terminal window
-- When the "Y" button is pressed, reduce the turning angle and print the current turning angle to the terminal window
+Expected Outcome: When the user runs the script and flips the handset's mode switch down,
+they are able to control the NeoRacer with the sticks:
+- When the throttle stick is pushed forward, the NeoRacer drives forward
+- When the throttle stick is pulled back, the NeoRacer drives backward
+- When the steering stick's x-axis has a value of greater than 0, the NeoRacer's wheels turn to the right
+- When the steering stick's x-axis has a value of less than 0, the NeoRacer's wheels turn to the left
+- Each time the mode switch is flipped down, the speed step grows by 0.25, wrapping back to 0.25
+after 1.0, and the current speed step prints to the terminal window
+- Finally, the speed and the angle follow how far each stick is pushed, instead of a fixed step
+
+With the mode switch up, the handset drives the car directly and the program's drive commands
+do nothing, so the program only takes over with the switch down.
 """
 
 ########################################################################################
@@ -49,24 +53,28 @@ global angle_offset
 # Functions
 ########################################################################################
 
-# [FUNCTION] The start function is run once every time the start button is pressed
+# [FUNCTION] The start function is run once when the program starts
 def start():
     global speed
     global angle
     global speed_offset
     global angle_offset
 
-    speed = 0.0 # The initial speed is at 1.0
+    speed = 0.0 # The initial speed is 0.0
     angle = 0.0 # The initial turning angle away from the center is at 0.0
-    speed_offset = 0.5 # The initial speed offset is 0.5
-    angle_offset = 1.0 # The inital angle offset is 1.0
+    speed_offset = 0.25 # The initial speed step is 0.25, about 1.5 m/s on the NeoRacer
+    angle_offset = 1.0 # The initial angle step is 1.0, full lock
+
+    # The NeoRacer's full speed (1.0) is about 6 m/s. Uncomment the next line and pick a
+    # lower limit for your room. Every speed the program sets is then scaled by it
+    # rc.drive.set_max_speed(0.25)
 
     # This tells the car to begin at a standstill
     rc.drive.stop()
 
 # [FUNCTION] After start() is run, this function is run once every frame (ideally at
-# 60 frames per second or slower depending on processing speed) until the back button
-# is pressed  
+# 60 frames per second or slower depending on processing speed) until Ctrl+C is pressed
+# in the terminal
 def update():
     global speed
     global angle
@@ -74,37 +82,41 @@ def update():
     global angle_offset
     
     # TODO Part 1: Modify the following conditional statement such that when the
-    # right trigger is pressed, the RACECAR moves forward at the designated speed.
-    # when the left trigger is pressed, the RACECAR moves backward at the designated speed.
-    if rc.controller.get_trigger(rc.controller.Trigger._____) > _____:
+    # throttle stick is pushed forward, the NeoRacer moves forward at the designated speed,
+    # and when it is pulled back, the NeoRacer moves backward at the designated speed.
+    # rc.controller.get_joystick() returns (x, y). On the NeoRacer the throttle stick is
+    # Joystick.LEFT and its y value is +1 fully forward, -1 fully back and 0 at rest.
+    (throttle_x, throttle_y) = rc.controller.get_joystick(rc.controller.Joystick._____)
+    if throttle_y > 0.5:
         speed = _____
-    elif rc.controller.get_trigger(rc.controller.Trigger._____) > _____:
+    elif throttle_y < -0.5:
         speed = _____
     else:
         speed = 0
-      
+
     # TODO Part 2: Modify the following conditional statement such that when the
-    # value of the left joystick's x-axis is greater than 0, the RACECAR's wheels turn right.
-    # When the value of the left joystick's x-axis is less than 0, the RACECAR's wheels turn left.
-    (x, y) = rc.controller.get_joystick(rc.controller.Joystick._____)
-    if x > 0.5:
+    # value of the steering stick's x-axis is greater than 0, the NeoRacer's wheels turn right.
+    # When the value is less than 0, the NeoRacer's wheels turn left. On the NeoRacer the
+    # steering stick is Joystick.RIGHT and its x value is +1 fully right and -1 fully left.
+    (steering_x, steering_y) = rc.controller.get_joystick(rc.controller.Joystick._____)
+    if steering_x > 0.5:
         angle = _____
-    elif x < -0.5:
+    elif steering_x < -0.5:
         angle = -_____
     else:
         angle = 0
 
-    # TODO Part 3: Write a conditional statement such that when the
-    # "A" button is pressed, increase the speed of the RACECAR. When the "B" button is pressed,
-    # decrease the speed of the RACECAR. Print the current speed of the RACECAR to the
-    # terminal window.
+    # TODO Part 3: Write a conditional statement such that each time the mode switch is
+    # flipped down (rc.controller.was_pressed(rc.controller.Button.RB)), speed_offset grows
+    # by 0.25. When it would pass 1.0, set it back to 0.25. Print the current speed_offset
+    # to the terminal window. The car only follows the program while the switch is down,
+    # so flip it up, then down again, to change the step.
 
-    # TODO Part 4: Write a conditional statement such that when the
-    # "X" button is pressed, increase the turning angle of the RACECAR. When the "Y" button 
-    # is pressed, decrease the turning angle of the RACECAR. Print the current turning angle 
-    # of the RACECAR to the terminal window.
+    # TODO Part 4: Once Parts 1 to 3 work, replace the fixed steps: set speed to
+    # throttle_y * speed_offset and angle to steering_x * angle_offset, so the car follows
+    # how far each stick is pushed.
 
-    # Send the speed and angle values to the RACECAR
+    # Send the speed and angle values to the NeoRacer
     rc.drive.set_speed_angle(speed, angle)
 
 ########################################################################################

@@ -1,7 +1,7 @@
 """
-MIT BWSI Autonomous RACECAR
-MIT License
-racecar-neo-outreach-labs
+Neobotics Foundation Inc.
+GPLv3 License
+neoracer-labs/lab_d/
 
 File Name: lab_d.py
 
@@ -9,16 +9,20 @@ Title: Lab D - Driving in Shapes
 
 Author: [PLACEHOLDER] << [Write your name or team name here]
 
-Purpose: Create a script to enable semi-autonomous driving for the RACECAR. Button presses
-enable a series of instructions sent to the RACECAR, which enable it to drive in various shapes.
-Complete the lines of code under the #TODO indicators to complete the lab.
+Version: 0.9.0
 
-Expected Outcome: When the user runs the script, they are able to control the RACECAR
-using the following keys:
-- When the "A" button is pressed, drive through the obstacle "Zigzag"
-- When the "B" button is pressed, drive through the obstacle "Spiral"
-- When the "X" button is pressed, drive through the obstacle "Hallway"
-- When the "Y" button is pressed, drive through the obstacle "Maze"
+Purpose: Create a script to enable semi-autonomous driving for the NeoRacer. Flips of the
+handset's mode switch start a series of instructions sent to the NeoRacer, which make it
+drive in various shapes. Complete the lines of code under the #TODO indicators to complete
+the lab.
+
+Expected Outcome: When the user runs the script, they are able to control the NeoRacer
+with the handset's mode switch:
+- The first time the mode switch is flipped down, drive through the obstacle "Zigzag"
+- The second time, drive through the obstacle "Spiral"
+- The third time, drive through the obstacle "Hallway"
+- The fourth time, drive through the obstacle "Maze", then start over with the "Zigzag"
+- When the mode switch is flipped up, the handset drives the car and the queue is cleared
 """
 
 ########################################################################################
@@ -37,12 +41,15 @@ rc = racecar_core.create_racecar()
 # Each entry is a list containing (time remaining, speed, angle)
 queue = []
 
+# Which shape the next flip of the mode switch drives: 0 Zigzag, 1 Spiral, 2 Hallway, 3 Maze
+shape_index = 0
+
 
 ########################################################################################
 # Functions
 ########################################################################################
 
-# [FUNCTION] The start function is run once every time the start button is pressed
+# [FUNCTION] The start function is run once when the program starts
 def start():
     # Begin at a full stop
     rc.drive.stop()
@@ -50,43 +57,53 @@ def start():
     # Begin with an empty queue
     queue.clear()
 
+    # The NeoRacer's full speed (1.0) is about 6 m/s. Uncomment the next line and pick a
+    # lower limit for your room. Every speed the program sets is then scaled by it
+    # rc.drive.set_max_speed(0.25)
+
     # Print start message
     print(
-        ">> Lab D - Driving in Mazes\n"
+        ">> Lab D - Driving in Shapes\n"
         "\n"
         "Controls:\n"
-        "   A button = drive through obstacle: \"Zigzag\"\n"
-        "   B button = drive through obstacle: \"Spiral\"\n"
-        "   X button = drive through obstacle: \"Hallway\"\n"
-        "   Y button = drive through obstacle: \"Maze\"\n"
+        "   Mode switch down = drive the next shape: \"Zigzag\", \"Spiral\", \"Hallway\", \"Maze\"\n"
+        "   Mode switch up = stop and clear the queue\n"
     )
 
 
 # [FUNCTION] After start() is run, this function is run once every frame (ideally at
-# 60 frames per second or slower depending on processing speed) until the back button
-# is pressed  
+# 60 frames per second or slower depending on processing speed) until Ctrl+C is pressed
+# in the terminal
 def update():
     global queue
+    global shape_index
 
-    # When the A button is pressed, add instructions to drive through the obstacle "Zigzag"
-    if rc.controller.was_pressed(rc.controller.Button.A):
-        drive_zigzag()
+    # Each time the mode switch is flipped down, add the instructions for the next shape.
+    # On the NeoRacer, Button.RB reads as down while the switch is down, and the car follows
+    # the program only in that position
+    if rc.controller.was_pressed(rc.controller.Button.RB):
+        if shape_index == 0:
+            drive_zigzag()
+        elif shape_index == 1:
+            drive_spiral()
+        elif shape_index == 2:
+            drive_hallway()
+        else:
+            drive_maze()
+        shape_index = (shape_index + 1) % 4
 
-    # When the B button is pressed, add instructions to drive through the obstacle "Spiral"
-    if rc.controller.was_pressed(rc.controller.Button.B):
-        drive_spiral()
-
-    # When the X button is pressed, add instructions to drive through the obstacle "Hallway"
-    if rc.controller.was_pressed(rc.controller.Button.X):
-        drive_hallway()
-
-    # When the Y button is pressed, add instructions to drive through the obstacle "Maze"
-    if rc.controller.was_pressed(rc.controller.Button.Y):
-        drive_maze()
+    # When the mode switch is flipped up, the handset drives the car again. Clear the queue
+    # so the shape does not continue when the switch comes back down
+    if rc.controller.was_released(rc.controller.Button.RB):
+        queue.clear()
 
     # TODO Part 1: Analyze the following code segment that executes instructions from the queue.
-    # Fill in the blanks with the missing variable assignments and indicies according to the
+    # Fill in the blanks with the missing variable assignments and indices according to the
     # behavior described by the comment below.
+
+    # With an empty queue, the car stands still
+    speed = 0
+    angle = 0
 
     # If the queue is not empty, follow the current drive instruction
     if len(queue) > 0:
@@ -96,12 +113,12 @@ def update():
         if queue[_][_] <= 0:
             queue.pop(0)
 
-    # Send speed and angle commands to the RACECAR
+    # Send speed and angle commands to the NeoRacer
     rc.drive.set_speed_angle(speed, angle)
 
 
 # [FUNCTION] When the function is called, clear the queue, then place instructions
-# inside of the queue that cause the RACECAR to drive in the zigzag
+# inside of the queue that cause the NeoRacer to drive in the zigzag
 def drive_zigzag():
     global queue
 
@@ -110,12 +127,12 @@ def drive_zigzag():
     queue.clear()
 
     # TODO Part 2: Append the correct variables in the correct order in order
-    # for the RACECAR to drive in the "Zigzag" obstacle course
+    # for the NeoRacer to drive in the "Zigzag" obstacle course
     # [Hint] queue.append([time, speed, angle])
 
 
 # [FUNCTION] When the function is called, clear the queue, then place instructions
-# inside of the queue that cause the RACECAR to drive in the spiral
+# inside of the queue that cause the NeoRacer to drive in the spiral
 def drive_spiral():
     global queue
 
@@ -123,16 +140,16 @@ def drive_spiral():
 
     queue.clear()
 
-    # TODO Part 3: Append the instructions into the queue that represent the RACECAR
+    # TODO Part 3: Append the instructions into the queue that represent the NeoRacer
     # driving in the "Spiral" obstacle course
 
 
 # [FUNCTION] When the function is called, clear the queue, then place instructions 
-# inside of the queue that cause the RACECAR to drive through the hallway
+# inside of the queue that cause the NeoRacer to drive through the hallway
 def drive_hallway():
     global queue
 
-    # TODO Part 4: Create constants that represent the RACECAR driving through
+    # TODO Part 4: Create constants that represent the NeoRacer driving through
     # the "Hallway" obstacle course, and then append the instructions in the
     # correct order into the queue for execution
 
@@ -140,11 +157,11 @@ def drive_hallway():
 
 
 # [FUNCTION] When the function is called, clear the queue, then place instructions 
-# inside of the queue that cause the RACECAR to drive in the maze
+# inside of the queue that cause the NeoRacer to drive in the maze
 def drive_maze():
     global queue
 
-    # TODO Part 5: Create constants that represent the RACECAR driving through
+    # TODO Part 5: Create constants that represent the NeoRacer driving through
     # different parts of the maze, and then append the instructions in the
     # correct order into the queue for execution
 

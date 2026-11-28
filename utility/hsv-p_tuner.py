@@ -1,20 +1,30 @@
 """
-MIT BWSI Autonomous RACECAR
-MIT License
-racecar-neo-outreach-labs
+Neobotics Foundation Inc.
+GPLv3 License
+neoracer-labs/utility/
 
 File Name: hsv-p_tuner.py
 
 Title: HSV + P-Controller Tuner (single-window Tk edition)
+
+Author: Neobotics
+
+Version: 0.9.0
 
 Purpose: Live-tune the HSV color threshold and P-controller gains used by the
 line-following labs. All UI lives in one Tk window: sliders on the left, mask
 and camera/contour previews on the right, line-position plot below.
 
 Controls:
-    Right trigger = release RACECAR failsafe (drive)
-    A button      = save tuned HSV + speed/angle values
-    B button      = print current speed/angle
+    Mode switch down = the program drives when the throttle stick is pushed forward
+    Throttle stick forward = drive at the slider speed while the program steers
+    Mode switch up = the handset drives the car; the program prints the current HSV range
+                     and speed/angle
+
+Expected Outcome: The Tk window shows the mask, the camera view with the contour and the
+line position plot. With the mode switch down and the throttle stick forward, the car
+follows the line at the slider speed. Each flip of the switch up prints the HSV range and
+the speed and angle to the terminal.
 """
 
 ########################################################################################
@@ -48,7 +58,7 @@ H_low, H_high = 0, 179
 S_low, S_high = 0, 255
 V_low, V_high = 0, 255
 
-# Camera frame dimensions used in update() — larger than v1's 320x240 so
+# Camera frame dimensions used in update(), larger than v1's 320x240 so
 # the previews are readable inside the embedded Tk window.
 FRAME_W, FRAME_H = 640, 480
 
@@ -64,7 +74,7 @@ CROP_TOP = 360
 CROP_FLOOR = ((CROP_TOP, 0), (FRAME_H, FRAME_W))
 
 # P-control gains (0..1)
-tune_speed = 0.5  # default 50% so the car drives as soon as the trigger is held
+tune_speed = 0.25  # default 25%, about 1.5 m/s, so the car drives slowly as soon as the throttle stick is pushed
 tune_angle = 0.5
 
 # Rolling line-position history
@@ -86,7 +96,7 @@ mask_label = None
 display_label = None
 latest_mask_bgr = None
 latest_display_bgr = None
-# Keep PhotoImage refs alive — Tk drops images when the ref is GC'd.
+# Keep PhotoImage refs alive. Tk drops images when the ref is GC'd.
 _mask_photo_ref = None
 _display_photo_ref = None
 
@@ -181,7 +191,7 @@ def build_tk_ui():
     # Hide until start() flips _ui_visible_requested. Keeps the terminal
     # uncovered so the user can read the start-message prompts first.
     root.withdraw()
-    # Target screen size — covers the bulk of a 1920x1080 HDMI display.
+    # Target screen size. It covers the bulk of a 1920x1080 HDMI display.
     # We re-assert geometry after content packs (see end of build_tk_ui).
     root.geometry("1000x620+30+30")
 
@@ -205,7 +215,7 @@ def build_tk_ui():
     left.grid(row=0, column=0, sticky='nw', padx=10, pady=10)
     tk.Frame(left, bg='black', width=480, height=1).pack(side='top')
 
-    tk.Label(left, text="RACECAR Neo Demo UI", background='black',
+    tk.Label(left, text="NeoRacer Demo UI", background='black',
              foreground='red', font=title_font).pack()
     tk.Label(left, text="Line Following Tuner App", background='black',
              foreground='orange', font=subtitle_font).pack()
@@ -216,7 +226,7 @@ def build_tk_ui():
     _make_slider(left, "S_High", 1, 255, 255, on_high_s_change, custom_font)
     _make_slider(left, "V_Low", 1, 255, 1, on_low_v_change, custom_font)
     _make_slider(left, "V_High", 1, 255, 255, on_high_v_change, custom_font)
-    _make_slider(left, "Speed (%)", 0, 100, 50, on_speed_change, custom_font)
+    _make_slider(left, "Speed (%)", 0, 100, 25, on_speed_change, custom_font)
     _make_slider(left, "Angle Sensitivity (%)", 0, 100, 50,
                  on_angsens_change, custom_font)
 
@@ -333,7 +343,7 @@ def update_contour(img):
         contour_area = 0
         return
 
-    # Live HSV bounds from the sliders — changes take effect immediately,
+    # Live HSV bounds from the sliders. Changes take effect immediately,
     # no controller-button save step required.
     contours = rc_utils.find_contours(image,
                                       (H_low, S_low, V_low),
@@ -354,27 +364,27 @@ def update_contour(img):
 
 
 ########################################################################################
-# RACECAR start/update
+# NeoRacer start/update
 ########################################################################################
 
-# [FUNCTION] The start function is run once every time the start button is pressed
+# [FUNCTION] The start function is run once when the program starts
 def start():
     global _ui_visible_requested
     rc.drive.set_speed_angle(0, 0)
     _ui_visible_requested = True  # _tk_refresh will deiconify the window
     print(
-        ">> RACECAR Neo OneShot Demo - Line Follower with Live HSV Tuning\n"
+        ">> NeoRacer Line Follower with Live HSV Tuning\n"
         "\n"
-        "Slider changes take effect immediately — no save step needed.\n"
+        "Slider changes take effect immediately. No save step is needed.\n"
         "\n"
         "Controls:\n"
-        "   Right trigger = release RACECAR failsafe (drive)\n"
-        "   A button = print current HSV + speed/angle to terminal\n"
-        "   B button = print system speed/angle"
+        "   Mode switch down = the program drives when the throttle stick is pushed forward\n"
+        "   Throttle stick forward = drive at the slider speed while the program steers\n"
+        "   Mode switch up = the handset drives the car; the program prints the current HSV range and speed/angle"
     )
 
 
-# [FUNCTION] Tune HSV values to RACECAR camera while in main loop
+# [FUNCTION] Tune HSV values to the NeoRacer camera while in main loop
 def update():
     global loc_history, speed, angle, latest_mask_bgr
 
@@ -392,7 +402,7 @@ def update():
 
     update_contour(img)
 
-    # P-controller — reads live tune_angle directly from the slider.
+    # P-controller. It reads live tune_angle directly from the slider.
     # Setpoint is the horizontal center of the processed frame; must scale
     # with FRAME_W (a contour exactly centered must yield error=0, else
     # the car steers hard one direction even when it's lined up correctly).
@@ -405,7 +415,11 @@ def update():
     # Live speed from the slider; no controller-button save step required.
     speed = tune_speed
 
-    if rc.controller.get_trigger(rc.controller.Trigger.RIGHT) > 0.1:
+    # The car drives while the throttle stick is pushed forward. On the NeoRacer the
+    # throttle stick is Joystick.LEFT and its y value is +1 fully forward and 0 at rest.
+    # The car follows these commands only while the handset's mode switch is down.
+    _, throttle = rc.controller.get_joystick(rc.controller.Joystick.LEFT)
+    if throttle > 0.1:
         rc.drive.set_speed_angle(speed, angle)
         if len(loc_history) >= HIST_LEN:
             loc_history.pop(-1)
@@ -415,15 +429,14 @@ def update():
     else:
         rc.drive.set_speed_angle(0, 0)
 
-    # A: snapshot the current tuning to the terminal so the student can
-    # transcribe it. Tuning itself is already applied live from the sliders.
-    if rc.controller.was_pressed(rc.controller.Button.A):
+    # Mode switch flipped up (Button.RB released): snapshot the current tuning to the
+    # terminal so the student can transcribe it. Tuning itself is already applied live
+    # from the sliders.
+    if rc.controller.was_released(rc.controller.Button.RB):
         print(f"HSV Threshold: ({H_low}, {S_low}, {V_low}), "
               f"({H_high}, {S_high}, {V_high})")
         print(f"Speed/Angle: tune_speed={tune_speed:.2f}, "
               f"tune_angle={tune_angle:.2f}")
-
-    if rc.controller.was_pressed(rc.controller.Button.B):
         print(f"System Speed/Angle: Speed={speed:.2f}, Angle={angle:.2f}")
 
 
@@ -448,8 +461,8 @@ if __name__ == "__main__":
 
     # rc.go() spins the executor synchronously; run it off-main so Tk owns
     # the main thread. rc's internal __run_thread continues to call update()
-    # on its own. rc.go() never returns until BACK+START exits the program,
-    # so daemon=True ensures it dies with the Tk window.
+    # on its own. rc.go() does not return while the program runs, so daemon=True
+    # ensures the thread dies with the Tk window.
     rc_thread = threading.Thread(target=rc.go, daemon=True)
     rc_thread.start()
 

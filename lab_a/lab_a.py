@@ -1,13 +1,15 @@
 """
-MIT BWSI Autonomous RACECAR
-MIT License
-racecar-neo-outreach-labs
+Neobotics Foundation Inc.
+GPLv3 License
+neoracer-labs/lab_a/
 
 File Name: lab_a.py
 
 Title: Lab A - Printing Statements
 
 Author: [PLACEHOLDER] << [Write your name or team name here]
+
+Version: 0.9.0
 
 Purpose: Print several statements to the terminal window and gain an understanding
 of how the start(), update() and update_slow() function work. Complete the lines of
@@ -42,7 +44,7 @@ counter = 0
 # Functions
 ########################################################################################
 
-# [FUNCTION] The start function is run once every time the start button is pressed
+# [FUNCTION] The start function is run once when the program starts
 def start():
     
     # TODO Part 1: Write a print statement that will print "Hello World!" to the terminal 
@@ -51,17 +53,17 @@ def start():
 
     # TODO Part 2: Write a print statement that will print the sum of 523 + 910 to the 
     # terminal window. Use Python to calculate the sum and automatically insert it into
-    # the print statmenet using an f string.
+    # the print statement using an f string.
     # print(f"The sum of 523 + 910 is: {_____}")
 
     # TODO Part 3: Modify the variable below to your name. Modify the print statement,
-    # such that when run, the program prints "Hello {your name}, welcome to RACECAR!"
+    # such that when run, the program prints "Hello {your name}, welcome to the NeoRacer!"
     your_name = "_____"
     # print(_____)
 
 # [FUNCTION] After start() is run, this function is run once every frame (ideally at
-# 60 frames per second or slower depending on processing speed) until the back button
-# is pressed  
+# 60 frames per second or slower depending on processing speed) until Ctrl+C is pressed
+# in the terminal
 def update():
     global counter
 

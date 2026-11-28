@@ -1,7 +1,7 @@
 """
-MIT BWSI Autonomous RACECAR
-MIT License
-racecar-neo-outreach-labs
+Neobotics Foundation Inc.
+GPLv3 License
+neoracer-labs/lab_f/
 
 File Name: lab_f.py
 
@@ -9,18 +9,20 @@ Title: Lab F - Line Follower
 
 Author: [PLACEHOLDER] << [Write your name or team name here]
 
-Purpose: Write a script to enable fully autonomous behavior from the RACECAR. The
-RACECAR should automatically identify the color of a line it sees, then drive on the
-center of the line throughout the obstacle course. The RACECAR should also identify
+Version: 0.9.0
+
+Purpose: Write a script to enable fully autonomous behavior from the NeoRacer. The
+NeoRacer should automatically identify the color of a line it sees, then drive on the
+center of the line throughout the obstacle course. The NeoRacer should also identify
 color changes, following colors with higher priority than others. Complete the lines 
 of code under the #TODO indicators to complete the lab.
 
-Expected Outcome: When the user runs the script, they are able to control the RACECAR
-using the following keys:
-- When the right trigger is pressed, the RACECAR moves forward at full speed
-- When the left trigger is pressed, the RACECAR, moves backwards at full speed
-- The angle of the RACECAR should only be controlled by the center of the line contour
-- The RACECAR sees the color RED as the highest priority, then GREEN, then BLUE
+Expected Outcome: When the user runs the script and flips the handset's mode switch down,
+they are able to control the NeoRacer's speed while the program steers:
+- When the throttle stick is pushed forward, the NeoRacer moves forward
+- When the throttle stick is pulled back, the NeoRacer moves backward
+- The angle of the NeoRacer should only be controlled by the center of the line contour
+- The NeoRacer sees the color RED as the highest priority, then GREEN, then BLUE
 """
 
 ########################################################################################
@@ -72,6 +74,8 @@ def update_contour():
     global contour_center
     global contour_area
 
+    # On the NeoRacer the first call subscribes to the camera and can wait up to a second
+    # for the first frame. Later calls return the newest frame at once
     image = rc.camera.get_color_image()
 
     if image is None:
@@ -87,7 +91,7 @@ def update_contour():
         # Display the image to the screen
         rc.display.show_color_image(image)
 
-# [FUNCTION] The start function is run once every time the start button is pressed
+# [FUNCTION] The start function is run once when the program starts
 def start():
     global speed
     global angle
@@ -95,6 +99,10 @@ def start():
     # Initialize variables
     speed = 0
     angle = 0
+
+    # The NeoRacer's full speed (1.0) is about 6 m/s. Uncomment the next line and pick a
+    # lower limit for your room. Every speed the program sets is then scaled by it
+    # rc.drive.set_max_speed(0.25)
 
     # Set initial driving speed and angle
     rc.drive.set_speed_angle(speed, angle)
@@ -104,22 +112,22 @@ def start():
 
     # Print start message
     print(
-        ">> Lab 2A - Color Image Line Following\n"
+        ">> Lab F - Line Follower\n"
         "\n"
         "Controls:\n"
-        "   Right trigger = accelerate forward\n"
-        "   Left trigger = accelerate backward\n"
-        "   A button = print current speed and angle\n"
-        "   B button = print contour center and area"
+        "   Mode switch down = the program drives the car\n"
+        "   Throttle stick = drive forward or backward while the program steers\n"
+        "   Mode switch up = the handset drives the car\n"
+        "   Speed, angle and the line position print every half second"
     )
 
 # [FUNCTION] After start() is run, this function is run once every frame (ideally at
-# 60 frames per second or slower depending on processing speed) until the back button
-# is pressed  
+# 60 frames per second or slower depending on processing speed) until Ctrl+C is pressed
+# in the terminal
 def update():
     """
-    After start() is run, this function is run every frame until the back button
-    is pressed
+    After start() is run, this function is run every frame until Ctrl+C is pressed
+    in the terminal
     """
     global speed
     global angle
@@ -127,8 +135,8 @@ def update():
     # Search for contours in the current color image
     update_contour()
 
-    # TODO Part 3: Determine the angle that the RACECAR should receive based on the current 
-    # position of the center of line contour on the screen. Hint: The RACECAR should drive in
+    # TODO Part 3: Determine the angle that the NeoRacer should receive based on the current 
+    # position of the center of line contour on the screen. Hint: The NeoRacer should drive in
     # a direction that moves the line back to the center of the screen.
 
     # Choose an angle based on contour_center
@@ -136,23 +144,13 @@ def update():
     if contour_center is not None:
         angle = _____
 
-    # Use the triggers to control the car's speed
-    rt = rc.controller.get_trigger(rc.controller.Trigger.RIGHT)
-    lt = rc.controller.get_trigger(rc.controller.Trigger.LEFT)
-    speed = rt - lt
+    # Use the throttle stick to control the car's speed. On the NeoRacer the throttle stick
+    # is Joystick.LEFT: its y value is +1 fully forward, -1 fully back and 0 at rest, so
+    # the car stops when the stick is released. 1.0 is full speed, about 6 m/s, unless
+    # start() sets a lower max speed
+    _, speed = rc.controller.get_joystick(rc.controller.Joystick.LEFT)
 
     rc.drive.set_speed_angle(speed, angle)
-
-    # Print the current speed and angle when the A button is held down
-    if rc.controller.is_down(rc.controller.Button.A):
-        print("Speed:", speed, "Angle:", angle)
-
-    # Print the center and area of the largest contour when B is held down
-    if rc.controller.is_down(rc.controller.Button.B):
-        if contour_center is None:
-            print("No contour found")
-        else:
-            print("Center:", contour_center, "Area:", contour_area)
 
 # [FUNCTION] update_slow() is similar to update() but is called once per second by
 # default. It is especially useful for printing debug messages, since printing a 
@@ -169,13 +167,13 @@ def update_slow():
     else:
         # If an image is found but no contour is found, print all dashes
         if contour_center is None:
-            print("-" * 32 + " : area = " + str(contour_area))
+            print("-" * 32 + f" : area = {contour_area}, speed = {speed:.2f}, angle = {angle:.2f}")
 
         # Otherwise, print a line of dashes with a | indicating the contour x-position
         else:
             s = ["-"] * 32
             s[int(contour_center[1] / 20)] = "|"
-            print("".join(s) + " : area = " + str(contour_area))
+            print("".join(s) + f" : area = {contour_area}, speed = {speed:.2f}, angle = {angle:.2f}")
 
 
 ########################################################################################

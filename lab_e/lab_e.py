@@ -1,7 +1,7 @@
 """
-MIT BWSI Autonomous RACECAR
-MIT License
-racecar-neo-outreach-labs
+Neobotics Foundation Inc.
+GPLv3 License
+neoracer-labs/lab_e/
 
 File Name: lab_e.py
 
@@ -9,32 +9,34 @@ Title: Lab E - Stoplight Challenge
 
 Author: [PLACEHOLDER] << [Write your name or team name here]
 
-Purpose: Write a script to enable autonomous behavior from the RACECAR. When
-the RACECAR sees a stoplight object (colored cube in the simulator), respond accordingly
+Version: 0.9.0
+
+Purpose: Write a script to enable autonomous behavior from the NeoRacer. When
+the NeoRacer sees a stoplight, respond accordingly
 by going straight, turning right, turning left, or stopping. Append instructions to the
-queue depending on whether the position of the RACECAR relative to the stoplight reaches
+queue depending on whether the position of the NeoRacer relative to the stoplight reaches
 a certain threshold, and be able to respond to traffic lights at consecutive intersections. 
 
-Expected Outcome: When the user runs the script, the RACECAR should control itself using
+Expected Outcome: When the user runs the script, the NeoRacer should control itself using
 the following constraints:
-- When the RACECAR sees a BLUE traffic light, make a right turn at the intersection
-- When the RACECAR sees an ORANGE traffic light, make a left turn at the intersection
-- When the RACECAR sees a GREEN traffic light, go straight
-- When the RACECAR sees a RED traffic light, stop moving,
-- When the RACECAR sees any other traffic light colors, stop moving.
+- When the NeoRacer sees a BLUE traffic light, make a right turn at the intersection
+- When the NeoRacer sees an ORANGE traffic light, make a left turn at the intersection
+- When the NeoRacer sees a GREEN traffic light, go straight
+- When the NeoRacer sees a RED traffic light, stop moving,
+- When the NeoRacer sees any other traffic light colors, stop moving.
+- The NeoRacer follows the program only while the handset's mode switch is down. Flipping
+it up hands the car back to the handset and clears the queue
 
-Considerations: Since the user is not controlling the RACECAR, be sure to consider the
+Considerations: Since the user is not controlling the NeoRacer, be sure to consider the
 following scenarios:
-- What should the RACECAR do if it sees two traffic lights, one at the current intersection
+- What should the NeoRacer do if it sees two traffic lights, one at the current intersection
 and the other at the intersection behind it?
 - What should be the constraint for adding the instructions to the queue? Traffic light position,
 traffic light area, or both?
 - How often should the instruction-adding function calls be? Once, twice, or 60 times a second?
 
-Environment: Test your code using the level "Neo Labs > Lab 3: Stoplight Challenge".
-By default, the traffic lights should direct you in a counterclockwise circle around the course.
-For testing purposes, you may change the color of the traffic light by first left-clicking to 
-select and then right clicking on the light to scroll through available colors.
+Environment: A course with intersections and a stoplight prop at each one. The prop shows
+one color at a time. Change its color to test each case.
 """
 
 ########################################################################################
@@ -54,7 +56,7 @@ rc = racecar_core.create_racecar()
 
 # >> Constants
 # The smallest contour we will recognize as a valid contour (Adjust threshold!)
-MIN_CONTOUR_AREA = ___
+MIN_CONTOUR_AREA = _____
 
 # TODO Part 1: Determine the HSV color threshold pairs for ORANGE, GREEN, RED, YELLOW, and PURPLE
 # Colors, stored as a pair (hsv_min, hsv_max)
@@ -71,6 +73,8 @@ contour_area = 0  # The area of contour
 
 queue = [] # The queue of instructions
 stoplight_color = "" # The current color of the stoplight
+speed = 0.0 # The current speed of the car
+angle = 0.0 # The current angle of the car's wheels
 
 ########################################################################################
 # Functions
@@ -82,6 +86,8 @@ def update_contour():
     global contour_center
     global contour_area
 
+    # On the NeoRacer the first call subscribes to the camera and can wait up to a second
+    # for the first frame. Later calls return the newest frame at once
     image = rc.camera.get_color_image()
 
     if image is None:
@@ -97,8 +103,12 @@ def update_contour():
         # Display the image to the screen
         rc.display.show_color_image(image)
 
-# [FUNCTION] The start function is run once every time the start button is pressed
+# [FUNCTION] The start function is run once when the program starts
 def start():
+
+    # The NeoRacer's full speed (1.0) is about 6 m/s. Uncomment the next line and pick a
+    # lower limit for your room. Every speed the program sets is then scaled by it
+    # rc.drive.set_max_speed(0.25)
 
     # Set initial driving speed and angle
     rc.drive.set_speed_angle(0,0)
@@ -108,18 +118,21 @@ def start():
 
     # Print start message (You may edit this to be more informative!)
     print(
-        ">> Lab 3 - Stoplight Challenge\n"
+        ">> Lab E - Stoplight Challenge\n"
         "\n"
         "Controls:\n"
-        "   A button = print current speed and angle\n"
-        "   B button = print contour center and area"
+        "   Mode switch down = the program drives the car\n"
+        "   Mode switch up = the handset drives the car and the queue is cleared\n"
+        "   Speed, angle, stoplight color and contour print every half second"
     )
 
 # [FUNCTION] After start() is run, this function is run once every frame (ideally at
-# 60 frames per second or slower depending on processing speed) until the back button
-# is pressed  
+# 60 frames per second or slower depending on processing speed) until Ctrl+C is pressed
+# in the terminal
 def update():
     global queue
+    global speed
+    global angle
 
     update_contour()
 
@@ -132,21 +145,24 @@ def update():
     # ... You may need more elif/else statements
 
     # TODO Part 3: Implement a way to execute instructions from the queue once they have been placed
-    # by the traffic light detector logic (Hint: Lab 2)
+    # by the traffic light detector logic (Hint: Lab D)
 
-    # Send speed and angle commands to the RACECAR
+    # Send speed and angle commands to the NeoRacer
     rc.drive.set_speed_angle(speed, angle)
 
-    # Print the current speed and angle when the A button is held down
-    if rc.controller.is_down(rc.controller.Button.A):
-        print("Speed:", speed, "Angle:", angle)
+    # When the mode switch is flipped up, the handset drives the car. Clear the queue so
+    # the program starts fresh when the switch comes back down
+    if rc.controller.was_released(rc.controller.Button.RB):
+        stopNow()
 
-    # Print the center and area of the largest contour when B is held down
-    if rc.controller.is_down(rc.controller.Button.B):
-        if contour_center is None:
-            print("No contour found")
-        else:
-            print("Center:", contour_center, "Area:", contour_area)
+# [FUNCTION] update_slow() is called every half second (see start()). It prints the
+# values a student needs while tuning, in place of printing every frame
+def update_slow():
+    print("Speed:", speed, "Angle:", angle, "Stoplight:", stoplight_color)
+    if contour_center is None:
+        print("No contour found")
+    else:
+        print("Center:", contour_center, "Area:", contour_area)
 
 # [FUNCTION] Appends the correct instructions to make a 90 degree right turn to the queue
 def turnRight():
@@ -160,11 +176,11 @@ def turnLeft():
 
     # TODO Part 5: Complete the rest of this function with the instructions to make a left turn
 
-# [FUNCTION] Appends the correct instructions to go straight through the intersectionto the queue
+# [FUNCTION] Appends the correct instructions to go straight through the intersection to the queue
 def goStraight():
     global queue
 
-    # TODO Part 6: Complete the rest of this function with the instructions to make a left turn
+    # TODO Part 6: Complete the rest of this function with the instructions to go straight
 
 # [FUNCTION] Clears the queue to stop all actions
 def stopNow():
